@@ -1,0 +1,7 @@
+{
+    "name": "endorsement",
+    "short_name": "endorsement",
+    "theme_color": "#EEF0F4",
+    "background_color": "#EEF0F4",
+    "display": "standalone"
+}

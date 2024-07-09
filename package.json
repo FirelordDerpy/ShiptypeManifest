@@ -1,0 +1,14 @@
+{
+  "name": "Scrim-s0rhbmle2o",
+  "description": "https://v2.scrimba.com/s04nehd/s0rhbmle2o",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vite": "latest"
+  },
+  "devDependencies": {}
+}
