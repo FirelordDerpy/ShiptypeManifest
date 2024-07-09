@@ -1,57 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ship Modification</title>
-    <style>
-        /* Add your CSS styles here */
-    </style>
+    <title>Ship Stats</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
 </head>
 <body>
-    <h1>Ship Modification</h1>
+    <h1>Ship Stats</h1>
 
     <div id="ship-stats">
         <!-- Ship stats will be populated here -->
     </div>
 
-    <h2>Upgrade Options</h2>
-
-    <button onclick="upgradeSpeed()">Upgrade Speed</button>
-    <button onclick="upgradeCargoCapacity()">Upgrade Cargo Capacity</button>
-    <button onclick="upgradeFirepower()">Upgrade Firepower</button>
-
-    <script src="ship.js"></script>
-    <script>
-        // Create a new ship
-        var myShip = new Ship('Destroyer', 30, 50, 100);
-
-        // Function to display ship stats
-        function displayShipStats() {
-            document.getElementById('ship-stats').innerHTML = `
-                <p>Type: ${myShip.type}</p>
-                <p>Speed: ${myShip.speed}</p>
-                <p>Cargo Capacity: ${myShip.cargoCapacity}</p>
-                <p>Firepower: ${myShip.firepower}</p>
-            `;
-        }
-
-        // Functions to upgrade ship and refresh stats
-        function upgradeSpeed() {
-            myShip.upgradeSpeed(10);
-            displayShipStats();
-        }
-
-        function upgradeCargoCapacity() {
-            myShip.upgradeCargoCapacity(20);
-            displayShipStats();
-        }
-
-        function upgradeFirepower() {
-            myShip.upgradeFirepower(30);
-            displayShipStats();
-        }
-
-        // Display initial ship stats
-        displayShipStats();
-    </script>
+    <script src="index.js"></script>
 </body>
 </html>
