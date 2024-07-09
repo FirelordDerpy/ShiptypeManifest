@@ -1,3 +1,12 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
+
+const app = initializeApp(appSettings);
+const db = getDatabase(app);
+
+
 // Define a class for ship types
 class ShipType {
     constructor(name, silhouette = 1, powerLevel = 1) {
@@ -5,6 +14,14 @@ class ShipType {
         this.silhouette = silhouette;
         this.powerLevel = powerLevel;
     }
+}
+function saveShipToFirebase(ship) {
+    // Get a reference to the ships node
+    const shipsRef = ref(db, 'ships');
+
+    // Push the new ship to the database
+    const newShipRef = push(shipsRef);
+    set(newShipRef, ship);
 }
 
 // Create some ship types
@@ -89,18 +106,18 @@ document.getElementById('new-ship-class-btn').addEventListener('click', function
     document.getElementById('ship-type-label').style.display = 'block';
 });
 
-
-// Event listener for the "Save" button in the new ship class form
 document.getElementById('save-ship-class-btn').addEventListener('click', function() {
     const type = document.getElementById('ship-type').value;
     const name = document.getElementById('ship-name').value;
     const complexity = document.getElementById('ship-complexity').value;
     const addons = document.getElementById('ship-addons').value;
 
-
     // Create a new ship and add it to the ships array
     const newShip = new Ship(type, name, complexity, addons);
     ships.push(newShip);
+
+    // Save the new ship to Firebase
+    saveShipToFirebase(newShip);
 
     // Display the stats for the new ship
     displayShipStats(newShip);
@@ -110,5 +127,34 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
     document.getElementById('ship-name').value = '';
 });
 
+
 // Display the stats for the first ship
 displayShipStats(ships[0]);
+
+// Function to load ships from Firebase
+function loadShipsFromFirebase() {
+    // Get a reference to the ships node
+    const shipsRef = ref(db, 'ships');
+
+    // Listen for changes to the ships node
+    onValue(shipsRef, (snapshot) => {
+        // Clear the current ships array
+        ships.length = 0;
+
+        // Get the ships from the snapshot
+        const data = snapshot.val();
+
+        // Add each ship from the snapshot to the ships array
+        for (const key in data) {
+            const shipData = data[key];
+            const ship = new Ship(shipData.type, shipData.name, shipData.complexity, shipData.addons);
+            ships.push(ship);
+
+            // Display the stats for the ship
+            displayShipStats(ship);
+        }
+    });
+}
+
+// Load the ships from Firebase when the app is opened
+loadShipsFromFirebase();
