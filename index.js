@@ -55,3 +55,29 @@ document.getElementById('ship-type').addEventListener('change', function() {
 // Populate the ship type dropdown and display the stats for the first ship type
 populateShipTypeDropdown();
 displayShipStats(ships[Object.keys(ships)[0]]);
+
+
+// Event listener for the "New Ship Class" button
+document.getElementById('new-ship-class-btn').addEventListener('click', function() {
+    document.getElementById('new-ship-class-form').style.display = 'block';
+});
+
+// Event listener for the "Save" button in the new ship class form
+document.getElementById('save-ship-class-btn').addEventListener('click', function() {
+    const name = document.getElementById('ship-name').value;
+    const silhouette = parseInt(document.getElementById('ship-silhouette').value);
+    const powerLevel = parseInt(document.getElementById('ship-power-level').value);
+
+    // Create a new ship class and add it to the ships object
+    ships[name] = new Ship(name, silhouette, powerLevel);
+
+    // Repopulate the ship type dropdown and display the stats for the new ship type
+    populateShipTypeDropdown();
+    displayShipStats(ships[name]);
+
+    // Hide the new ship class form and clear the input fields
+    document.getElementById('new-ship-class-form').style.display = 'none';
+    document.getElementById('ship-name').value = '';
+    document.getElementById('ship-silhouette').value = '';
+    document.getElementById('ship-power-level').value = '';
+});
