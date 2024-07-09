@@ -1,3 +1,6 @@
+document.addEventListener('DOMContentLoaded', (event) => {
+});
+
 class Ship {
     constructor(name, silhouette, powerLevel) {
         this.name = name;
