@@ -1,32 +1,57 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <audio id="like-sound" src="C:\Coding learning\Add to cart\ShiptypeManifest\assets\yay.wav" preload="auto"></audio>
-    <audio id="saved-sound" src="assets\saved.wav" preload="auto"></audio>
-    <audio id="image-sound" src="assets\champion.wav" preload="auto"></audio>
-    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet">
-
-    <title>Text Submission</title>
-    <link rel="stylesheet" href="index.css">
+    <title>Ship Modification</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
 </head>
 <body>
-    <div id="input-form">
-        <img id="freddie-image" src="/assets/freddie.png" alt="Freddie">
-        <div id="textOne">We are the Champions</div>
-        <textarea type="text" id="text1" placeholder="Write your endorsement here"></textarea>
-            <div id="fromTo">
-            <input type="text" id="text3" placeholder="From">
-            <input type="text" id="text2" placeholder="To">
-            </div>
-        <button id="submit-btn">Publish</button>
-        <div id="textTwo">- Endorsements -</div>
-    </div>
-    <div id="display-area"></div>
+    <h1>Ship Modification</h1>
 
-    <script src="index.js" type="module"></script>
+    <div id="ship-stats">
+        <!-- Ship stats will be populated here -->
+    </div>
+
+    <h2>Upgrade Options</h2>
+
+    <button onclick="upgradeSpeed()">Upgrade Speed</button>
+    <button onclick="upgradeCargoCapacity()">Upgrade Cargo Capacity</button>
+    <button onclick="upgradeFirepower()">Upgrade Firepower</button>
+
+    <script src="ship.js"></script>
+    <script>
+        // Create a new ship
+        var myShip = new Ship('Destroyer', 30, 50, 100);
+
+        // Function to display ship stats
+        function displayShipStats() {
+            document.getElementById('ship-stats').innerHTML = `
+                <p>Type: ${myShip.type}</p>
+                <p>Speed: ${myShip.speed}</p>
+                <p>Cargo Capacity: ${myShip.cargoCapacity}</p>
+                <p>Firepower: ${myShip.firepower}</p>
+            `;
+        }
+
+        // Functions to upgrade ship and refresh stats
+        function upgradeSpeed() {
+            myShip.upgradeSpeed(10);
+            displayShipStats();
+        }
+
+        function upgradeCargoCapacity() {
+            myShip.upgradeCargoCapacity(20);
+            displayShipStats();
+        }
+
+        function upgradeFirepower() {
+            myShip.upgradeFirepower(30);
+            displayShipStats();
+        }
+
+        // Display initial ship stats
+        displayShipStats();
+    </script>
 </body>
 </html>
-
-
