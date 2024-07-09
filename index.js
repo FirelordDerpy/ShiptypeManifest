@@ -125,6 +125,7 @@ document.getElementById('submit-btn').addEventListener('click', async function()
 });
 
 
+
 document.getElementById('freddie-image').addEventListener('click', function() {
     document.getElementById('image-sound').play();
 });
