@@ -130,3 +130,7 @@ document.getElementById('freddie-image').addEventListener('click', function() {
 });
 
 
+const likeSound = document.getElementById('like-sound');
+likeSound.onerror = function() {
+    console.error('Error loading or playing the like-sound audio file.');
+};
