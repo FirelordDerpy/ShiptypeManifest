@@ -1,46 +1,37 @@
 class Ship {
-    constructor(type, speed, cargoCapacity, firepower) {
-        this.type = type;
-        this.speed = speed;
-        this.cargoCapacity = cargoCapacity;
-        this.firepower = firepower;
-    }
-
-    // Method to upgrade speed
-    upgradeSpeed(amount) {
-        this.speed += amount;
-    }
-
-    // Method to upgrade cargo capacity
-    upgradeCargoCapacity(amount) {
-        this.cargoCapacity += amount;
-    }
-
-    // Method to upgrade firepower
-    upgradeFirepower(amount) {
-        this.firepower += amount;
+    constructor(name, silhouette, powerLevel) {
+        this.name = name;
+        this.silhouette = silhouette;
+        this.powerLevel = powerLevel;
     }
 }
 
-// Create a new ship
-var myShip = new Ship('Destroyer', 30, 50, 100);
-
-// Upgrade the ship
-myShip.upgradeSpeed(10);
-myShip.upgradeCargoCapacity(20);
-myShip.upgradeFirepower(30);
+// Create some ships
+const ships = {
+    'Fighter': new Ship('Fighter', 1, 2),
+    'Interceptor': new Ship('Interceptor', 2, 3),
+    // Add more ships as needed
+};
 
 // Function to display ship stats
 function displayShipStats(ship) {
     const shipStatsDiv = document.getElementById('ship-stats');
 
     shipStatsDiv.innerHTML = `
-        <p>Type: ${ship.type}</p>
-        <p>Speed: ${ship.speed}</p>
-        <p>Cargo Capacity: ${ship.cargoCapacity}</p>
-        <p>Firepower: ${ship.firepower}</p>
+        <p>Name: ${ship.name}</p>
+        <p>Silhouette: ${ship.silhouette}</p>
+        <p>Power Level: ${ship.powerLevel}</p>
     `;
 }
 
-// Display the ship stats
-displayShipStats(myShip);
+// Event listener for the ship type dropdown
+document.getElementById('ship-type').addEventListener('change', function() {
+    const selectedShipType = this.value;
+    const selectedShip = ships[selectedShipType];
+
+    if (selectedShip) {
+        displayShipStats(selectedShip);
+    } else {
+        document.getElementById('ship-stats').innerHTML = '';
+    }
+});
