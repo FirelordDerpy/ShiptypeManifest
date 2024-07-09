@@ -12,20 +12,26 @@
     <div id="new-ship-class-form" style="display: none;">
         <label for="ship-name">Name:</label>
         <input type="text" id="ship-name">
+        
+        <label for="ship-type" id="ship-type-label" style="display: none;">Choose a ship type:</label>
+        <select id="ship-type" style="display: none;">
+        <!-- Options will be populated by JavaScript -->
+        </select>
 
-        <label for="ship-silhouette">Silhouette:</label>
-        <input type="number" id="ship-silhouette">
+        <label for="ship-complexity">Complexity:</label>
+        <select id="ship-complexity">
+            <!-- Options will be populated by JavaScript -->
+        </select>
 
-        <label for="ship-power-level">Power Level:</label>
-        <input type="number" id="ship-power-level">
+        <label for="ship-addons">Addons:</label>
+        <select id="ship-addons">
+            <!-- Options will be populated by JavaScript -->
+        </select>
+
 
         <button id="save-ship-class-btn">Save</button>
     </div>
 
-    <label for="ship-type">Choose a ship type:</label>
-    <select id="ship-type">
-        <!-- Options will be populated by JavaScript -->
-    </select>
 
     <div id="ship-stats">
         <!-- Ship stats will be populated here -->
