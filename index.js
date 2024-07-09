@@ -24,6 +24,22 @@ function displayShipStats(ship) {
     `;
 }
 
+// Function to populate the ship type dropdown
+function populateShipTypeDropdown() {
+    const shipTypeSelect = document.getElementById('ship-type');
+
+    // Clear any existing options
+    shipTypeSelect.innerHTML = '';
+
+    // Add an option for each ship type
+    for (const shipType in ships) {
+        const option = document.createElement('option');
+        option.value = shipType;
+        option.textContent = shipType;
+        shipTypeSelect.appendChild(option);
+    }
+}
+
 // Event listener for the ship type dropdown
 document.getElementById('ship-type').addEventListener('change', function() {
     const selectedShipType = this.value;
@@ -35,3 +51,7 @@ document.getElementById('ship-type').addEventListener('change', function() {
         document.getElementById('ship-stats').innerHTML = '';
     }
 });
+
+// Populate the ship type dropdown and display the stats for the first ship type
+populateShipTypeDropdown();
+displayShipStats(ships[Object.keys(ships)[0]]);
