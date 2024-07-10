@@ -7,3 +7,8 @@ body {
 #ship-stats {
     margin-top: 20px;
 }
+.ship-stats-block {
+    border: 1px solid #000; /* Change the color as needed */
+    padding: 10px;
+    margin-bottom: 10px;
+}

@@ -173,6 +173,7 @@ function displayShipStats(ship) {
 
     // Create a new div for this ship's stats
     const shipDiv = document.createElement('div');
+    shipDiv.className = 'ship-stats-block'; // Add this line
     shipDiv.innerHTML = `
         <h2>${ship.name}</h2>
         <p>Type: ${ship.type}</p>
@@ -186,6 +187,7 @@ function displayShipStats(ship) {
     // Prepend this ship's stats to the ship-stats div
     shipStatsDiv.insertBefore(shipDiv, shipStatsDiv.firstChild);
 }
+
 
 // Function to populate the dropdowns
 function populateDropdown(dropdownId, options) {
