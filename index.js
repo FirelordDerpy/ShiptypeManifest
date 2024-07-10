@@ -125,7 +125,9 @@ function populateDropdown(dropdownId, options) {
 }
 
 // Populate the addons dropdown
-populateDropdown('ship-addons', Object.keys(addons));
+populateDropdown('ship-addons-1', Object.keys(addons));
+populateDropdown('ship-addons-2', Object.keys(addons));
+populateDropdown('ship-addons-3', Object.keys(addons));
 
 // Get the ship type names
 const shipTypeNames = Object.keys(shipTypes);
@@ -143,13 +145,17 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
     const name = document.getElementById('ship-name').value;
 
     // Get an array of selected addons
-    const dropdown = document.getElementById('ship-addons');
-    const selectedOptions = Array.from(dropdown.selectedOptions);
-    const addons = selectedOptions.map(option => option.value);
+    const dropdown1 = document.getElementById('ship-addons-1');
+    const dropdown2 = document.getElementById('ship-addons-2');
+    const dropdown3 = document.getElementById('ship-addons-3');
+    const selectedOptions = [
+        dropdown1.options[dropdown1.selectedIndex].value,
+        dropdown2.options[dropdown2.selectedIndex].value,
+        dropdown3.options[dropdown3.selectedIndex].value
+    ];
 
     // Create a new ship
-    const newShip = new Ship(type, name, addons);
-
+    const newShip = new Ship(type, name, selectedOptions);
     // Save the new ship to Firebase
     saveShipToFirebase(newShip);
 
