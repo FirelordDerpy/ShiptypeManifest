@@ -33,27 +33,58 @@ const shipTypes = {
 
 // Define a class for individual ships
 class Ship {
-    constructor(type, name, addons) {
+    constructor(type, name, addonNames) {
         this.type = type;
         this.name = name;
-        this.addons = addons;
+        if (Array.isArray(addonNames)) {
+            this.addons = addonNames.map(name => {
+                if (typeof name === 'string') {
+                    return { name: name, details: addons[name] };
+                } else {
+                    return name; // Already an object with name and details properties
+                }
+            });
+        } else {
+            // Handle the case where addonNames is not an array
+            // You might need to convert it to an array or handle it differently depending on the actual data structure
+            this.addons = [];
+        }
         this.silhouette = shipTypes[type].silhouette;
-        this.powerLevel = shipTypes[type].powerLevel;
+        this.powerLevel = shipTypes[type].powerLevel + this.calculatePowerLevelBoost();
         this.baseCost = shipTypes[type].baseCost;
+        this.finalCost = this.calculateFinalCost();
     }
 
-    // Method to calculate final cost based on complexity
+    // Method to calculate final cost based on addons
     calculateFinalCost() {
-        return this.baseCost;
+        let addonsCost = 0;
+        for (const addon of this.addons) {
+            addonsCost += addon.details.cost;
+        }
+        return this.baseCost + addonsCost;
+    }
+
+    // Method to calculate power level boost based on addons
+    calculatePowerLevelBoost() {
+        let powerLevelBoost = 0;
+        for (const addon of this.addons) {
+            powerLevelBoost += addon.details.powerLevelBoost;
+        }
+        return powerLevelBoost;
     }
 }
 
-const addons = ['Shield', 'Laser', 'Rocket'];
+
+const addons = {
+    'Shield': { cost: 100, powerLevelBoost: 1 },
+    'Laser': { cost: 200, powerLevelBoost: 2 },
+    'Rocket': { cost: 300, powerLevelBoost: 3 }
+};
 
 // Create some individual ships
 const ships = [
-    new Ship('Fighter', 'Fighter 1', addons),
-    new Ship('Interceptor', 'Interceptor 1', addons),
+    new Ship('Fighter', 'Fighter 1', ['Shield', 'Laser']),
+    new Ship('Interceptor', 'Interceptor 1', ['Shield', 'Rocket']),
     // Add more individual ships as needed
 ];
 
@@ -69,8 +100,8 @@ function displayShipStats(ship) {
         <p>Base Cost: ${ship.baseCost}</p>
         <p>Silhouette: ${ship.silhouette}</p>
         <p>Power Level: ${ship.powerLevel}</p>
-        <p>Addons: ${ship.addons}</p>
-        <p>Final Cost: ${ship.calculateFinalCost()}</p>
+        <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
+        <p>Final Cost: ${ship.finalCost}</p>
     `;
 
     // Prepend this ship's stats to the ship-stats div
@@ -94,7 +125,7 @@ function populateDropdown(dropdownId, options) {
 }
 
 // Populate the addons dropdown
-populateDropdown('ship-addons', addons);
+populateDropdown('ship-addons', Object.keys(addons));
 
 // Get the ship type names
 const shipTypeNames = Object.keys(shipTypes);
@@ -105,14 +136,16 @@ populateDropdown('ship-type', shipTypeNames);
 // Event listener for the "New Ship Class" button
 document.getElementById('new-ship-class-btn').addEventListener('click', function() {
     document.getElementById('new-ship-class-form').style.display = 'block';
-    document.getElementById('ship-type').style.display = 'block';
-    document.getElementById('ship-type-label').style.display = 'block';
 });
 
 document.getElementById('save-ship-class-btn').addEventListener('click', function() {
     const type = document.getElementById('ship-type').value;
     const name = document.getElementById('ship-name').value;
-    const addons = document.getElementById('ship-addons').value;
+
+    // Get an array of selected addons
+    const dropdown = document.getElementById('ship-addons');
+    const selectedOptions = Array.from(dropdown.selectedOptions);
+    const addons = selectedOptions.map(option => option.value);
 
     // Create a new ship
     const newShip = new Ship(type, name, addons);
