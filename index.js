@@ -177,10 +177,10 @@ function displayShipStats(ship) {
     shipDiv.className = 'ship-stats-block'; // Add this line
     shipDiv.innerHTML = `
         <h2>${ship.name}</h2>
-        <p>Type: ${ship.type}. Base Cost: ${ship.baseCost}</p>
+        <p>Type: ${ship.type}. Base Cost: ₹ ${ship.baseCost}</p>
         <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.powerLevel + ship.calculatePowerLevelBoost()}</p>
         <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
-        <p>Final Cost: ${ship.finalCost.toLocaleString()}</p>
+        <p>Final Cost: ₹ ${ship.finalCost.toLocaleString()}</p>
         <button class="delete-btn">Delete</button>
     `;
 
