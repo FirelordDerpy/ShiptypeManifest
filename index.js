@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
 const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
 
@@ -22,6 +22,7 @@ function saveShipToFirebase(ship) {
     // Push the new ship to the database
     const newShipRef = push(shipsRef);
     set(newShipRef, ship);
+    return newShipRef.key;
 }
 
 // Ship types (name, silhouette, power level, price,)
@@ -180,10 +181,21 @@ function displayShipStats(ship) {
         <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.powerLevel + ship.calculatePowerLevelBoost()}</p>
         <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
         <p>Final Cost: ${ship.finalCost.toLocaleString()}</p>
+        <button class="delete-btn">Delete</button>
     `;
 
     // Prepend this ship's stats to the ship-stats div
     shipStatsDiv.insertBefore(shipDiv, shipStatsDiv.firstChild);
+    
+    shipDiv.querySelector('.delete-btn').addEventListener('click', function() {
+        if (window.confirm('Are you sure you want to delete this ship?')) {
+            const shipRef = ref(db, 'ships/' + ship.id);
+            remove(shipRef);
+            if (shipStatsDiv.contains(shipDiv)) {
+            shipStatsDiv.removeChild(shipDiv);
+            }
+        }
+    });
 }
 
 
@@ -235,8 +247,9 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
 
     // Create a new ship
     const newShip = new Ship(type, name, selectedOptions);
+    newShip.id = saveShipToFirebase(newShip);
     // Save the new ship to Firebase
-    saveShipToFirebase(newShip);
+    //saveShipToFirebase(newShip);
 
     // Hide the new ship class form and clear the input fields
     document.getElementById('new-ship-class-form').style.display = 'none';
@@ -266,11 +279,12 @@ function loadShipsFromFirebase() {
         for (const key in data) {
             const shipData = data[key];
             const ship = new Ship(shipData.type, shipData.name, shipData.addons);
+            ship.id = key; // Add this line
             ships.push(ship);
 
             // Display the stats for the ship
             displayShipStats(ship);
-        }
+            }
     });
 }
 
