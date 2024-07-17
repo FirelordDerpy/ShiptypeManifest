@@ -1,4 +1,4 @@
-// Cost. Power Level boost percentage. 
+// Cost. Power Level boost percentage. Hull Boost. Shield Armor boost.
 export const addons = {
     'None': { cost: 0, powerLevelBoost: 0, hullPointsBoost: 0, shieldArmorPointsBoost: 0},
     'Advanced Shields': { cost: 1, powerLevelBoost: 1, hullPointsBoost: 20, shieldArmorPointsBoost: 200 },
