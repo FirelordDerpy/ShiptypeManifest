@@ -45,6 +45,8 @@ class Ship {
         this.powerLevel = shipTypes[type].powerLevel + this.calculatePowerLevelBoost();
         this.baseCost = shipTypes[type].baseCost;
         this.finalCost = this.calculateFinalCost();
+        this.hullPoints = shipTypes[type].hullPoints + this.calculateHullPointsBoost();
+        this.shieldArmorPoints = shipTypes[type].shieldArmorPoints + this.calculateShieldArmorPointsBoost();
     }
 
     // Method to calculate final cost based on addons
@@ -69,6 +71,24 @@ class Ship {
         }
         return powerLevelBoost;
     }
+        calculateShieldArmorPointsBoost() {
+        let shieldArmorPointsBoost = 0;
+        for (const addon of this.addons) {
+            // Calculate the shield and armor points boost as a percentage of the base shield and armor points
+            let addonBoost = this.shieldArmorPoints * (addon.details.shieldArmorPointsBoost / 100);
+            shieldArmorPointsBoost += Number.isNaN(addonBoost) ? 0 : addonBoost;
+        }
+        return shieldArmorPointsBoost;
+    }
+        calculateHullPointsBoost() {
+        let hullPointsBoost = 0;
+        for (const addon of this.addons) {
+            // Calculate the hull points boost as a percentage of the base hull points
+            let addonBoost = this.hullPoints * (addon.details.hullPointsBoost / 100);
+            hullPointsBoost += Number.isNaN(addonBoost) ? 0 : addonBoost;
+        }
+        return hullPointsBoost;
+    }
 
 }
 
@@ -90,6 +110,7 @@ function displayShipStats(ship) {
         <h2>${ship.name}</h2>
         <p>Type: ${ship.type}. Manufacturer: ${ship.manufacturer}. Base Cost: ₹ ${ship.baseCost}</p>
         <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.powerLevel + ship.calculatePowerLevelBoost()}</p>
+        <p>Hull Points: ${ship.hullPoints + ship.calculateHullPointsBoost()}. Shield and Armor Points: ${ship.shieldArmorPoints + ship.calculateShieldArmorPointsBoost()}</p>
         <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
         <p>Final Cost: ₹ ${ship.finalCost.toLocaleString()}</p>
         <p>Description: ${ship.description}</p>
