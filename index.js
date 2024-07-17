@@ -93,6 +93,7 @@ function displayShipStats(ship) {
         <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
         <p>Final Cost: ₹ ${ship.finalCost.toLocaleString()}</p>
         <p>Description: ${ship.description}</p>
+        <button class="edit-btn">Edit</button>
         <button class="delete-btn">Delete</button>
     `;
 
@@ -107,6 +108,21 @@ function displayShipStats(ship) {
             shipStatsDiv.removeChild(shipDiv);
             }
         }
+
+    });
+
+    shipDiv.querySelector('.edit-btn').addEventListener('click', function() {
+        // Load the ship's data into the form
+        document.getElementById('ship-type').value = ship.type;
+        document.getElementById('ship-name').value = ship.name;
+        document.getElementById('ship-manufacturer').value = ship.manufacturer;
+        document.getElementById('ship-description').value = ship.description;
+        // TODO: Load the ship's addons into the dropdowns
+        // Show the form
+        document.getElementById('new-ship-class-form').style.display = 'block';
+        // Change the "Save" button to "Update"
+        document.getElementById('save-ship-class-btn').textContent = 'Update';
+        document.getElementById('save-ship-class-btn').dataset.id = ship.id; // Save the id for later
     });
 }
 
@@ -144,6 +160,7 @@ document.getElementById('new-ship-class-btn').addEventListener('click', function
 });
 
 document.getElementById('save-ship-class-btn').addEventListener('click', function() {
+    // Get the ship details from the form
     const type = document.getElementById('ship-type').value;
     const name = document.getElementById('ship-name').value;
     const manufacturer = document.getElementById('ship-manufacturer').value;
@@ -159,16 +176,31 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
         dropdown3.options[dropdown3.selectedIndex].value
     ];
 
-    // Create a new ship
-    const newShip = new Ship(type, name, selectedOptions, description, manufacturer);
-    newShip.id = saveShipToFirebase(newShip);
-    // Save the new ship to Firebase
-    //saveShipToFirebase(newShip);
+    if (this.textContent === 'Update') {
+        // This is an update
+        // Get the id of the ship to update
+        const id = this.dataset.id;
 
-    // Hide the new ship class form and clear the input fields
+        // Update the ship in Firebase
+        const shipRef = ref(db, 'ships/' + id);
+        set(shipRef, { type, name, addons: selectedOptions, description, manufacturer });
+
+        // Reset the button text
+        this.textContent = 'Save';
+    } else {
+        // This is a new ship
+        // Create a new ship
+        const newShip = new Ship(type, name, selectedOptions, description, manufacturer);
+
+        // Save the new ship to Firebase
+        newShip.id = saveShipToFirebase(newShip);
+    }
+
+    // Hide the form and clear the input fields
     document.getElementById('new-ship-class-form').style.display = 'none';
     document.getElementById('ship-name').value = '';
 });
+
 
 // Display the stats for the first ship
 displayShipStats(ships[0]);
