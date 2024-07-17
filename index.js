@@ -1,16 +1,20 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 import { manufacturers } from './shipyard.js';
-import { addons } from './addons.js';
+import { addons, primaryArm } from './addons.js';
 import { ShipType, shipTypes } from './shipTypes.js';
 
 const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
+const primaryArmamentDropdown = document.getElementById('ship-primary-armament');
+const selectedPrimaryArmament = primaryArmamentDropdown.options[primaryArmamentDropdown.selectedIndex].value;
 
 
 const app = initializeApp(appSettings);
 const db = getDatabase(app);
 
 populateDropdown('ship-manufacturer', manufacturers);
+populateDropdown('ship-primary-armament', primaryArm);
+
 
 function saveShipToFirebase(ship) {
     // Get a reference to the ships node
@@ -211,7 +215,7 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
     } else {
         // This is a new ship
         // Create a new ship
-        const newShip = new Ship(type, name, selectedOptions, description, manufacturer);
+        const newShip = new Ship(type, name, selectedOptions, description, manufacturer, selectedPrimaryArmament);
 
         // Save the new ship to Firebase
         newShip.id = saveShipToFirebase(newShip);

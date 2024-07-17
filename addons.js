@@ -43,3 +43,11 @@ export const addons = {
     'Ship Part': { cost: 1, powerLevelBoost: 1, hullPointsBoost: 0, shieldArmorPointsBoost: 0 },
     'Civilian Vessel': { cost: 0.5, powerLevelBoost: 0.5, hullPointsBoost: 0, shieldArmorPointsBoost: 0 }
 };
+
+export const primaryArm = {
+    'Laser Cannons': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Proton Torpedoes': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Ion Cannons': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Concussion Missiles': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    // Add more weapons as needed
+};
