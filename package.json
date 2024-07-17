@@ -1,6 +1,6 @@
 {
-  "name": "shiptypemanifest",
-  "description": "https://v2.scrimba.com/s04nehd/s0rhbmle2o",
+  "name": "Scrim-s0aa1os3cc",
+  "description": "https://v2.scrimba.com/s0ebie1u12",
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -8,7 +8,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "vite": "latest"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@vitejs/plugin-react": "*"
+  }
 }

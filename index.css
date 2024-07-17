@@ -11,4 +11,5 @@ body {
     border: 1px solid #000; /* Change the color as needed */
     padding: 10px;
     margin-bottom: 10px;
+    max-width: 500px;
 }
