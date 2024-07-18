@@ -34,6 +34,8 @@ class Ship {
         this.description = description;
         this.manufacturer = manufacturer;
         this.primaryArmament = primaryArmament;
+        this.primaryArmamentDetails = primaryArm[primaryArmament] || null;
+        this.primaryArmamentDetails = primaryArm[primaryArmament] || null;
         
         if (Array.isArray(addonNames)) {
             this.addons = addonNames.map(name => {
@@ -69,6 +71,17 @@ class Ship {
     }    calculateTotalCost() {
         return this.baseCost + this.addonsCost();
     }
+    
+        priArmCost() {
+            if (this.primaryArmamentDetails === null) {
+                return 0;
+            }
+            let priArmCost = this.baseCost * (this.primaryArmamentDetails.wCost / 100);
+            return priArmCost;
+        }  
+    calculateTotalCost() {
+        return this.baseCost + this.addonsCost() + this.priArmCost();
+    }
 
     // Method to calculate power level boost based on addons
     addonPowerLevelBoost() {
@@ -80,8 +93,17 @@ class Ship {
         }
         return powerLevelBoost;
     }
+        weaponPowerLevelBoost() {
+            if (this.primaryArmamentDetails === null) {
+                return 0;
+            }
+            let weaponPowerLevelBoost = this.powerLevel * (this.primaryArmamentDetails.weaponPL / 100);
+            return weaponPowerLevelBoost;
+            }
+
+    
         calculateTotalPowerLevel() {
-        return this.powerLevel + this.addonPowerLevelBoost();
+        return this.powerLevel + this.addonPowerLevelBoost() + this.weaponPowerLevelBoost();
     }
         calculateShieldArmorPointsBoost() {
         let shieldArmorPointsBoost = 0;
@@ -274,14 +296,11 @@ function loadShipsFromFirebase() {
 loadShipsFromFirebase();
 
 
+/* export const primaryArm = {
+    'Laser Cannons': { wCost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Proton Torpedoes': { wCost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Ion Cannons': { wCost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Concussion Missiles': { wCost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+}; */
 
-
-/*
-const primaryArm = {
-    'Laser Cannons': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
-    'Proton Torpedoes': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
-    'Ion Cannons': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
-    'Concussion Missiles': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
-};
-*/
 populateDropdown('primary-armament', Object.keys(primaryArm));

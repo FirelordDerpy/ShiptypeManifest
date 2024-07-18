@@ -45,8 +45,8 @@ export const addons = {
 };
 
 export const primaryArm = {
-    'Laser Cannons': { cost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
-    'Proton Torpedoes': { cost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
-    'Ion Cannons': { cost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
-    'Concussion Missiles': { cost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Laser Cannons': { wCost: -100, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Proton Torpedoes': { wCost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Ion Cannons': { wCost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Concussion Missiles': { wCost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
 };
