@@ -49,5 +49,4 @@ export const primaryArm = {
     'Proton Torpedoes': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
     'Ion Cannons': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
     'Concussion Missiles': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
-    // Add more weapons as needed
 };

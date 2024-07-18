@@ -28,11 +28,12 @@ function saveShipToFirebase(ship) {
 
 // Define a class for individual ships
 class Ship {
-    constructor(type, name, addonNames, description = '', manufacturer = '') {
+    constructor(type, name, addonNames, primaryArmament, description = '', manufacturer = '') {
         this.type = type;
         this.name = name;
         this.description = description;
         this.manufacturer = manufacturer;
+        this.primaryArmament = primaryArmament;
         if (Array.isArray(addonNames)) {
             this.addons = addonNames.map(name => {
                 if (typeof name === 'string') {
@@ -98,11 +99,10 @@ class Ship {
 }
 
 // Create some individual ships
-const ships = [
-    new Ship('Fighters', 'Fighter 1', ['Heavy Armor', 'Heavy Armor']),
-    new Ship('Interceptors', 'Interceptor 1', ['Heavy Armor', 'Heavy Armor']),
-    // Add more individual ships as needed
+let ships = [
+    new Ship('None', 'none', []),
 ];
+
 
 // Function to display ship stats
 function displayShipStats(ship) {
@@ -116,6 +116,7 @@ function displayShipStats(ship) {
         <p>Type: ${ship.type}. Manufacturer: ${ship.manufacturer}. Base Cost: ₹ ${ship.baseCost}</p>
         <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.powerLevel + ship.calculatePowerLevelBoost()}</p>
         <p>Hull Points: ${ship.hullPoints + ship.calculateHullPointsBoost()}. Shield and Armor Points: ${ship.shieldArmorPoints + ship.calculateShieldArmorPointsBoost()}</p>
+        <p>Primary Armament: ${ship.primaryArmament}</p>
         <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
         <p>Final Cost: ₹ ${ship.finalCost.toLocaleString()}</p>
         <p>Description: ${ship.description}</p>
@@ -191,6 +192,7 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
     const name = document.getElementById('ship-name').value;
     const manufacturer = document.getElementById('ship-manufacturer').value;
     const description = document.getElementById('ship-description').value;
+    const primaryArmament = document.getElementById('primary-armament').value;
 
     // Get an array of selected addons
     const dropdown1 = document.getElementById('ship-addons-1');
@@ -210,14 +212,15 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
 
         // Update the ship in Firebase
         const shipRef = ref(db, 'ships/' + id);
-        set(shipRef, { type, name, addons: selectedOptions, description, manufacturer });
+        set(shipRef, { type, name, addons: selectedOptions, primaryArmament, description, manufacturer });
 
         // Reset the button text
         this.textContent = 'Save';
     } else {
         // This is a new ship
         // Create a new ship
-        const newShip = new Ship(type, name, selectedOptions, description, manufacturer,);
+        const primaryArmament = document.getElementById('primary-armament').value;
+        const newShip = new Ship(type, name, selectedOptions, primaryArmament, description, manufacturer,);
 
         // Save the new ship to Firebase
         newShip.id = saveShipToFirebase(newShip);
@@ -251,7 +254,7 @@ function loadShipsFromFirebase() {
         // Add each ship from the snapshot to the ships array
         for (const key in data) {
             const shipData = data[key];
-            const ship = new Ship(shipData.type, shipData.name, shipData.addons, shipData.description, shipData.manufacturer);
+            const ship = new Ship(shipData.type, shipData.name, shipData.addons, shipData.primaryArmament, shipData.description, shipData.manufacturer);
             ship.id = key; // Add this line
             ships.push(ship);
 
@@ -263,3 +266,16 @@ function loadShipsFromFirebase() {
 
 // Load the ships from Firebase when the app is opened
 loadShipsFromFirebase();
+
+
+
+
+
+const primaryArm = {
+    'Laser Cannons': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Proton Torpedoes': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Ion Cannons': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Concussion Missiles': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+};
+
+populateDropdown('primary-armament', Object.keys(primaryArm));
