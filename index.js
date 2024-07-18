@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 import { manufacturers } from './shipyard.js';
-import { addons, } from './addons.js';
+import { addons, primaryArm} from './addons.js';
 import { ShipType, shipTypes } from './shipTypes.js';
 
 const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
@@ -34,6 +34,7 @@ class Ship {
         this.description = description;
         this.manufacturer = manufacturer;
         this.primaryArmament = primaryArmament;
+        
         if (Array.isArray(addonNames)) {
             this.addons = addonNames.map(name => {
                 if (typeof name === 'string') {
@@ -48,16 +49,16 @@ class Ship {
             this.addons = [];
         }
         this.silhouette = shipTypes[type].silhouette;
-        this.powerLevel = shipTypes[type].powerLevel + this.calculatePowerLevelBoost();
+        this.powerLevel = shipTypes[type].powerLevel + this.addonPowerLevelBoost();
         this.baseCost = shipTypes[type].baseCost;
-        this.finalCost = this.calculateFinalCost();
+        this.finalCost = this.addonsCost();
         this.hullPoints = shipTypes[type].hullPoints + this.calculateHullPointsBoost();
         this.shieldArmorPoints = shipTypes[type].shieldArmorPoints + this.calculateShieldArmorPointsBoost();
     }
 
     // Method to calculate final cost based on addons
 
-    calculateFinalCost() {
+    addonsCost() {
         let addonsCost = 0;
         for (const addon of this.addons) {
             // Calculate the cost of the addon as a percentage of the base cost
@@ -65,10 +66,12 @@ class Ship {
             addonsCost += Number.isNaN(addonCost) ? 0 : addonCost;
         }
         return this.baseCost + addonsCost;
+    }    calculateTotalCost() {
+        return this.baseCost + this.addonsCost();
     }
 
     // Method to calculate power level boost based on addons
-    calculatePowerLevelBoost() {
+    addonPowerLevelBoost() {
         let powerLevelBoost = 0;
         for (const addon of this.addons) {
             // Calculate the power level boost as a percentage of the base power level
@@ -76,6 +79,9 @@ class Ship {
             powerLevelBoost += Number.isNaN(addonBoost) ? 0 : addonBoost;
         }
         return powerLevelBoost;
+    }
+        calculateTotalPowerLevel() {
+        return this.powerLevel + this.addonPowerLevelBoost();
     }
         calculateShieldArmorPointsBoost() {
         let shieldArmorPointsBoost = 0;
@@ -114,11 +120,11 @@ function displayShipStats(ship) {
     shipDiv.innerHTML = `
         <h2>${ship.name}</h2>
         <p>Type: ${ship.type}. Manufacturer: ${ship.manufacturer}. Base Cost: ₹ ${ship.baseCost}</p>
-        <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.powerLevel + ship.calculatePowerLevelBoost()}</p>
+        <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.calculateTotalPowerLevel()}</p>
         <p>Hull Points: ${ship.hullPoints + ship.calculateHullPointsBoost()}. Shield and Armor Points: ${ship.shieldArmorPoints + ship.calculateShieldArmorPointsBoost()}</p>
         <p>Primary Armament: ${ship.primaryArmament}</p>
         <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
-        <p>Final Cost: ₹ ${ship.finalCost.toLocaleString()}</p>
+        <p>Final Cost: ₹ ${ship.calculateTotalCost().toLocaleString()}</p>
         <p>Description: ${ship.description}</p>
         <button class="edit-btn">Edit</button>
         <button class="delete-btn">Delete</button>
@@ -270,12 +276,12 @@ loadShipsFromFirebase();
 
 
 
-
+/*
 const primaryArm = {
     'Laser Cannons': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
     'Proton Torpedoes': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
     'Ion Cannons': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
     'Concussion Missiles': { cost: 1, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
 };
-
+*/
 populateDropdown('primary-armament', Object.keys(primaryArm));
