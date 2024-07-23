@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 import { manufacturers } from './shipyard.js';
-import { addons, primaryArm} from './addons.js';
+import { addons, primaryArm, secondaryArm } from './addons.js';
 import { ShipType, shipTypes } from './shipTypes.js';
 
 const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
@@ -28,14 +28,15 @@ function saveShipToFirebase(ship) {
 
 // Define a class for individual ships
 class Ship {
-    constructor(type, name, addonNames, primaryArmament, description = '', manufacturer = '') {
+    constructor(type, name, addonNames, primaryArmament, secondaryArmament, description = '', manufacturer = '') {
         this.type = type;
         this.name = name;
         this.description = description;
         this.manufacturer = manufacturer;
         this.primaryArmament = primaryArmament;
         this.primaryArmamentDetails = primaryArm[primaryArmament] || null;
-        this.primaryArmamentDetails = primaryArm[primaryArmament] || null;
+        this.secondaryArmament = secondaryArmament;
+        this.secondaryArmamentDetails = secondaryArm[secondaryArmament] || null;
         
         if (Array.isArray(addonNames)) {
             this.addons = addonNames.map(name => {
@@ -79,8 +80,15 @@ class Ship {
             let priArmCost = this.baseCost * (this.primaryArmamentDetails.wCost / 100);
             return priArmCost;
         }  
+        secArmCost() {
+        if (this.secondaryArmamentDetails === null) {
+            return 0;
+        }
+    let secArmCost = this.baseCost * (this.secondaryArmamentDetails.cost / 100);
+    return secArmCost;
+}
     calculateTotalCost() {
-        return this.baseCost + this.addonsCost() + this.priArmCost();
+    return this.baseCost + this.addonsCost() + this.priArmCost() + this.secArmCost();
     }
 
     // Method to calculate power level boost based on addons
@@ -93,18 +101,22 @@ class Ship {
         }
         return powerLevelBoost;
     }
-        weaponPowerLevelBoost() {
-            if (this.primaryArmamentDetails === null) {
-                return 0;
-            }
-            let weaponPowerLevelBoost = this.powerLevel * (this.primaryArmamentDetails.weaponPL / 100);
-            return weaponPowerLevelBoost;
+            weaponPowerLevelBoost() {
+                let weaponPowerLevelBoost = 0;
+                if (this.primaryArmamentDetails !== null) {
+                    weaponPowerLevelBoost += this.powerLevel * (this.primaryArmamentDetails.weaponPL / 100);
+                }
+                if (this.secondaryArmamentDetails !== null) {
+                    weaponPowerLevelBoost += this.powerLevel * (this.secondaryArmamentDetails.powerLevelBoost / 100);
+                }
+                return weaponPowerLevelBoost;
             }
 
     
         calculateTotalPowerLevel() {
         return this.powerLevel + this.addonPowerLevelBoost() + this.weaponPowerLevelBoost();
-    }
+        }
+        
         calculateShieldArmorPointsBoost() {
         let shieldArmorPointsBoost = 0;
         for (const addon of this.addons) {
@@ -221,6 +233,7 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
     const manufacturer = document.getElementById('ship-manufacturer').value;
     const description = document.getElementById('ship-description').value;
     const primaryArmament = document.getElementById('primary-armament').value;
+    const secondaryArmament = document.getElementById('secondary-armament').value;
 
     // Get an array of selected addons
     const dropdown1 = document.getElementById('ship-addons-1');
@@ -240,7 +253,7 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
 
         // Update the ship in Firebase
         const shipRef = ref(db, 'ships/' + id);
-        set(shipRef, { type, name, addons: selectedOptions, primaryArmament, description, manufacturer });
+        set(shipRef, { type, name, addons: selectedOptions, primaryArmament, secondaryArmament, description, manufacturer });
 
         // Reset the button text
         this.textContent = 'Save';
@@ -248,7 +261,7 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
         // This is a new ship
         // Create a new ship
         const primaryArmament = document.getElementById('primary-armament').value;
-        const newShip = new Ship(type, name, selectedOptions, primaryArmament, description, manufacturer,);
+        const newShip = new Ship(type, name, selectedOptions, primaryArmament, secondaryArmament, description, manufacturer,);
 
         // Save the new ship to Firebase
         newShip.id = saveShipToFirebase(newShip);
@@ -282,7 +295,7 @@ function loadShipsFromFirebase() {
         // Add each ship from the snapshot to the ships array
         for (const key in data) {
             const shipData = data[key];
-            const ship = new Ship(shipData.type, shipData.name, shipData.addons, shipData.primaryArmament, shipData.description, shipData.manufacturer);
+            const ship = new Ship(shipData.type, shipData.name, shipData.addons, shipData.primaryArmament, shipData.secondaryArmament, shipData.description, shipData.manufacturer);
             ship.id = key; // Add this line
             ships.push(ship);
 
@@ -304,3 +317,4 @@ loadShipsFromFirebase();
 }; */
 
 populateDropdown('primary-armament', Object.keys(primaryArm));
+populateDropdown('secondary-armament', Object.keys(secondaryArm));
