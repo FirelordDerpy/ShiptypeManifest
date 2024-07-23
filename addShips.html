@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ship Stats</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+</head>
+<body>
+    <h1>Ship Stats</h1>
+    
+    <a href="shiplist.html">View Ship List</a>
+    <a href="shipyards.html">Shipyards</a>
+    <a href="addShips.html">Adding Ships</a>
+    <a href="index.html">index</a>
+
+
+    <button id="new-ship-class-btn">New Ship Class</button>
+
+
+
+
+    <div id="new-ship-class-form" style="display: none;">
+        <label for="ship-name">Name:</label>
+        <input type="text" id="ship-name">
+        
+        <label for="ship-type" id="ship-type-label">Choose a ship type:</label>
+        <select id="ship-type">
+        <!-- Options will be populated by JavaScript -->
+        </select>
+
+        <label for="primary-armament">Primary Weapon:</label>
+        <select id="primary-armament"></select><!-- -->
+        <label for="secondary-armament-1">Primary Weapon:</label>
+        <select id="secondary-armament-1"></select><!-- -->
+        <select id="secondary-armament-2"></select>
+        <label for="ship-addons">Addons:</label>
+        <select id="ship-addons-1"></select>
+        <select id="ship-addons-2"></select>
+        <select id="ship-addons-3"></select>
+        <select id="ship-manufacturer"></select>
+        <textarea id="ship-description" placeholder="Enter ship description here"></textarea>
+        <button id="save-ship-class-btn">Save</button>
+    </div>
+
+    <div id="ship-stats">
+        <!-- Ship stats will be populated here -->
+    </div>
+    
+    <script src="/shipyard.js" type="module"></script>
+    <script src="/shipTypes.js" type="module"></script>
+    <script src="/addons.js" type="module"></script>
+    <script src="index.js" type="module"></script>
+
+</body>
+</html>
