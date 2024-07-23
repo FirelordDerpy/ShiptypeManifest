@@ -28,15 +28,17 @@ function saveShipToFirebase(ship) {
 
 // Define a class for individual ships
 class Ship {
-    constructor(type, name, addonNames, primaryArmament, secondaryArmament, description = '', manufacturer = '') {
+    constructor(type, name, addonNames, primaryArmament, secondaryArmament1, secondaryArmament2,description = '', manufacturer = '') {
         this.type = type;
         this.name = name;
         this.description = description;
         this.manufacturer = manufacturer;
         this.primaryArmament = primaryArmament;
         this.primaryArmamentDetails = primaryArm[primaryArmament] || null;
-        this.secondaryArmament = secondaryArmament;
-        this.secondaryArmamentDetails = secondaryArm[secondaryArmament] || null;
+        this.secondaryArmament1 = secondaryArmament1;
+        this.secondaryArmamentDetails = secondaryArm[secondaryArmament1] || null;
+        this.secondaryArmament2 = secondaryArmament2 || 'None';
+        this.secondaryArmamentDetails2 = secondaryArm[secondaryArmament2] || null;
         
         if (Array.isArray(addonNames)) {
             this.addons = addonNames.map(name => {
@@ -157,6 +159,8 @@ function displayShipStats(ship) {
         <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.calculateTotalPowerLevel()}</p>
         <p>Hull Points: ${ship.hullPoints + ship.calculateHullPointsBoost()}. Shield and Armor Points: ${ship.shieldArmorPoints + ship.calculateShieldArmorPointsBoost()}</p>
         <p>Primary Armament: ${ship.primaryArmament}</p>
+        <p>Secondary Armament 1: ${ship.secondaryArmament1}</p>
+        <p>Secondary Armament 2: ${ship.secondaryArmament2}</p>
         <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
         <p>Final Cost: ₹ ${ship.calculateTotalCost().toLocaleString()}</p>
         <p>Description: ${ship.description}</p>
@@ -233,7 +237,8 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
     const manufacturer = document.getElementById('ship-manufacturer').value;
     const description = document.getElementById('ship-description').value;
     const primaryArmament = document.getElementById('primary-armament').value;
-    const secondaryArmament = document.getElementById('secondary-armament').value;
+    const secondaryArmament1 = document.getElementById('secondary-armament-1').value;
+    const secondaryArmament2 = document.getElementById('secondary-armament-2').value;
 
     // Get an array of selected addons
     const dropdown1 = document.getElementById('ship-addons-1');
@@ -245,6 +250,22 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
         dropdown3.options[dropdown3.selectedIndex].value
     ];
 
+    if (name === '') {
+        // No primary armament selected, show an alert and return
+        alert('Please Name the class');
+        return;
+    }
+    if (type === '' || type === 'None') {
+        // No primary armament selected, show an alert and return
+        alert('Please select a Ship type.');
+        return;
+    }
+
+        if (primaryArmament === '' || primaryArmament === 'None') {
+        // No primary armament selected, show an alert and return
+        alert('Please select a primary armament.');
+        return;
+    }
 
     if (this.textContent === 'Update') {
         // This is an update
@@ -253,7 +274,7 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
 
         // Update the ship in Firebase
         const shipRef = ref(db, 'ships/' + id);
-        set(shipRef, { type, name, addons: selectedOptions, primaryArmament, secondaryArmament, description, manufacturer });
+        set(shipRef, { type, name, addons: selectedOptions, primaryArmament, secondaryArmament1, secondaryArmament2, description, manufacturer });
 
         // Reset the button text
         this.textContent = 'Save';
@@ -261,7 +282,7 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
         // This is a new ship
         // Create a new ship
         const primaryArmament = document.getElementById('primary-armament').value;
-        const newShip = new Ship(type, name, selectedOptions, primaryArmament, secondaryArmament, description, manufacturer,);
+        const newShip = new Ship(type, name, selectedOptions, primaryArmament, secondaryArmament1, secondaryArmament2, description, manufacturer,);
 
         // Save the new ship to Firebase
         newShip.id = saveShipToFirebase(newShip);
@@ -295,7 +316,7 @@ function loadShipsFromFirebase() {
         // Add each ship from the snapshot to the ships array
         for (const key in data) {
             const shipData = data[key];
-            const ship = new Ship(shipData.type, shipData.name, shipData.addons, shipData.primaryArmament, shipData.secondaryArmament, shipData.description, shipData.manufacturer);
+            const ship = new Ship(shipData.type, shipData.name, shipData.addons, shipData.primaryArmament, shipData.secondaryArmament1, shipData.secondaryArmament2, shipData.description, shipData.manufacturer);
             ship.id = key; // Add this line
             ships.push(ship);
 
@@ -317,4 +338,6 @@ loadShipsFromFirebase();
 }; */
 
 populateDropdown('primary-armament', Object.keys(primaryArm));
-populateDropdown('secondary-armament', Object.keys(secondaryArm));
+populateDropdown('secondary-armament-1', Object.keys(secondaryArm));
+populateDropdown('secondary-armament-2', Object.keys(secondaryArm));
+
