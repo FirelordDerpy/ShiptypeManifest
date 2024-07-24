@@ -239,6 +239,7 @@ if (window.location.pathname === '/addShips.html') {
 
 // Event listener for the "New Ship Class" button
 document.getElementById('new-ship-class-btn').addEventListener('click', function() {
+    console.log("New ship");
     document.getElementById('new-ship-class-form').style.display = 'block';
 });
 
