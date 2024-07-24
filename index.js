@@ -14,7 +14,6 @@ const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.fir
 const app = initializeApp(appSettings);
 const db = getDatabase(app);
 
-populateDropdown('ship-manufacturer', manufacturers);
 
 
 function saveShipToFirebase(ship) {
@@ -147,60 +146,71 @@ let ships = [
 
 
 // Function to display ship stats
-function displayShipStats(ship) {
+function displayShipStats() {
+    // Clear the ship-stats div
     const shipStatsDiv = document.getElementById('ship-stats');
-
-    // Create a new div for this ship's stats
-    const shipDiv = document.createElement('div');
-    shipDiv.className = 'ship-stats-block'; // Add this line
-    shipDiv.innerHTML = `
-        <h2>${ship.name}</h2>
-        <p>Type: ${ship.type}. Manufacturer: ${ship.manufacturer}. Base Cost: ₹ ${ship.baseCost}</p>
-        <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.calculateTotalPowerLevel()}</p>
-        <p>Hull Points: ${ship.hullPoints + ship.calculateHullPointsBoost()}. Shield and Armor Points: ${ship.shieldArmorPoints + ship.calculateShieldArmorPointsBoost()}</p>
-        <p>Primary Armament: ${ship.primaryArmament}</p>
-        <p>Secondary Armament 1: ${ship.secondaryArmament1}</p>
-        <p>Secondary Armament 2: ${ship.secondaryArmament2}</p>
-        <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
-        <p>Final Cost: ₹ ${ship.calculateTotalCost().toLocaleString()}</p>
-        <p>Description: ${ship.description}</p>
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
-    `;
-
-    // Prepend this ship's stats to the ship-stats div
-    shipStatsDiv.insertBefore(shipDiv, shipStatsDiv.firstChild);
+        if (!shipStatsDiv) {
+        console.log("The 'ship-stats' div does not exist on this page.");
+        return;
+        }  
+    shipStatsDiv.innerHTML = '';
     
-    shipDiv.querySelector('.delete-btn').addEventListener('click', function() {
-        if (window.confirm('Are you sure you want to delete this ship?')) {
-            const shipRef = ref(db, 'ships/' + ship.id);
-            remove(shipRef);
-            if (shipStatsDiv.contains(shipDiv)) {
-            shipStatsDiv.removeChild(shipDiv);
+    for (const ship of ships) {
+
+        // Create a new div for this ship's stats
+        const shipDiv = document.createElement('div');
+        shipDiv.className = 'ship-stats-block'; // Add this line
+        shipDiv.innerHTML = `
+            <h2>${ship.name}</h2>
+            <p>Type: ${ship.type}. Manufacturer: ${ship.manufacturer}. Base Cost: ₹ ${ship.baseCost}</p>
+            <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.calculateTotalPowerLevel()}</p>
+            <p>Hull Points: ${ship.hullPoints + ship.calculateHullPointsBoost()}. Shield and Armor Points: ${ship.shieldArmorPoints + ship.calculateShieldArmorPointsBoost()}</p>
+            <p>Primary Armament: ${ship.primaryArmament}</p>
+            <p>Secondary Armament 1: ${ship.secondaryArmament1}</p>
+            <p>Secondary Armament 2: ${ship.secondaryArmament2}</p>
+            <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
+            <p>Final Cost: ₹ ${ship.calculateTotalCost().toLocaleString()}</p>
+            <p>Description: ${ship.description}</p>
+            <button class="edit-btn">Edit</button>
+            <button class="delete-btn">Delete</button>
+        `;
+
+        // Prepend this ship's stats to the ship-stats div
+        shipStatsDiv.insertBefore(shipDiv, shipStatsDiv.firstChild);
+        
+        shipDiv.querySelector('.delete-btn').addEventListener('click', function() {
+            if (window.confirm('Are you sure you want to delete this ship?')) {
+                const shipRef = ref(db, 'ships/' + ship.id);
+                remove(shipRef);
+                if (shipStatsDiv.contains(shipDiv)) {
+                    shipStatsDiv.removeChild(shipDiv);
+                }
             }
-        }
+        });
 
-    });
-
-    shipDiv.querySelector('.edit-btn').addEventListener('click', function() {
-        // Load the ship's data into the form
-        document.getElementById('ship-type').value = ship.type;
-        document.getElementById('ship-name').value = ship.name;
-        document.getElementById('ship-manufacturer').value = ship.manufacturer;
-        document.getElementById('ship-description').value = ship.description;
-        // TODO: Load the ship's addons into the dropdowns
-        // Show the form
-        document.getElementById('new-ship-class-form').style.display = 'block';
-        // Change the "Save" button to "Update"
-        document.getElementById('save-ship-class-btn').textContent = 'Update';
-        document.getElementById('save-ship-class-btn').dataset.id = ship.id; // Save the id for later
-    });
+        shipDiv.querySelector('.edit-btn').addEventListener('click', function() {
+            // Load the ship's data into the form
+            document.getElementById('ship-type').value = ship.type;
+            document.getElementById('ship-name').value = ship.name;
+            document.getElementById('ship-manufacturer').value = ship.manufacturer;
+            document.getElementById('ship-description').value = ship.description;
+            document.getElementById('new-ship-class-form').style.display = 'block';
+            document.getElementById('save-ship-class-btn').textContent = 'Update';
+            document.getElementById('save-ship-class-btn').dataset.id = ship.id; // Save the id for later
+        });
+    }
 }
 
 
-// Function to populate the dropdowns
+
 function populateDropdown(dropdownId, options) {
     const dropdown = document.getElementById(dropdownId);
+
+    // Check if dropdown exists
+    if (!dropdown) {
+        console.log(`Dropdown with id ${dropdownId} does not exist on this page.`);
+        return;
+    }
 
     // Clear any existing options
     dropdown.innerHTML = '';
@@ -214,16 +224,18 @@ function populateDropdown(dropdownId, options) {
     }
 }
 
-// Populate the addons dropdown
-populateDropdown('ship-addons-1', Object.keys(addons));
-populateDropdown('ship-addons-2', Object.keys(addons));
-populateDropdown('ship-addons-3', Object.keys(addons));
 
-// Get the ship type names
-const shipTypeNames = Object.keys(shipTypes);
+if (window.location.pathname === '/addShips.html') {
+    // Populate the addons dropdown
+    populateDropdown('ship-addons-1', Object.keys(addons));
+    populateDropdown('ship-addons-2', Object.keys(addons));
+    populateDropdown('ship-addons-3', Object.keys(addons));
+    // Get the ship type names
+    const shipTypeNames = Object.keys(shipTypes);
+    // Populate the ship type dropdown
+    populateDropdown('ship-type', shipTypeNames);
+    populateDropdown('ship-manufacturer', manufacturers);
 
-// Populate the ship type dropdown
-populateDropdown('ship-type', shipTypeNames);
 
 // Event listener for the "New Ship Class" button
 document.getElementById('new-ship-class-btn').addEventListener('click', function() {
@@ -292,7 +304,7 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
     document.getElementById('new-ship-class-form').style.display = 'none';
     document.getElementById('ship-name').value = '';
 });
-
+}
 
 // Display the stats for the first ship
 displayShipStats(ships[0]);
@@ -308,7 +320,7 @@ function loadShipsFromFirebase() {
         ships.length = 0;
 
         // Clear the ship-stats div
-        document.getElementById('ship-stats').innerHTML = '';
+//*       // document.getElementById('ship-stats').innerHTML = '';
 
         // Get the ships from the snapshot
         const data = snapshot.val();
@@ -327,17 +339,13 @@ function loadShipsFromFirebase() {
 }
 
 // Load the ships from Firebase when the app is opened
-loadShipsFromFirebase();
-
-
-/* export const primaryArm = {
-    'Laser Cannons': { wCost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
-    'Proton Torpedoes': { wCost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
-    'Ion Cannons': { wCost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
-    'Concussion Missiles': { wCost: 1, weaponPL: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
-}; */
+//loadShipsFromFirebase();
 
 populateDropdown('primary-armament', Object.keys(primaryArm));
 populateDropdown('secondary-armament-1', Object.keys(secondaryArm));
 populateDropdown('secondary-armament-2', Object.keys(secondaryArm));
+
+
+loadShipsFromFirebase();
+
 
