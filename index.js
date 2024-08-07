@@ -263,7 +263,7 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
 });
 }
 
-displayShipStats(ships[0]);
+//displayShipStats(ships[0]);
 
 function loadShipsFromFirebase() {
     const shipsRef = ref(db, 'ships');
@@ -277,10 +277,13 @@ function loadShipsFromFirebase() {
             ship.id = key;
             ships.push(ship);
 
-            displayShipStats(ship);
+            if (window.location.pathname === '/addShips.html') {
+                displayShipStats(ship);
             }
+
             if (window.location.pathname === '/shiplist.html') {
-            displayShipStatsLite();
+                displayShipStatsLite();
+            }
         }
     });
 }
