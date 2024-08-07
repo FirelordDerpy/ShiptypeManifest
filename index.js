@@ -298,8 +298,10 @@ displayShipStatsLite();
 let sortOrder = 'type'; 
 
 document.getElementById('sort-order').addEventListener('change', function() {
-    sortOrder = this.value;
-    displayShipStatsLite();
+    if (window.location.pathname === '/shiplist.html') {
+        sortOrder = this.value;
+        displayShipStatsLite();
+    }
 });
 
 
