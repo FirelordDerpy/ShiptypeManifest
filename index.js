@@ -348,6 +348,15 @@ loadShipsFromFirebase();
 displayShipStatsLite();
 
 
+let sortOrder = 'type'; // Default sort order
+
+document.getElementById('sort-order').addEventListener('change', function() {
+    sortOrder = this.value;
+    displayShipStatsLite();
+});
+
+
+
 // Function to display limited ship stats
 function displayShipStatsLite() {
     // Check if we are on the 'shiplist.html' page
@@ -366,8 +375,26 @@ function displayShipStatsLite() {
 
     // Clear the ship-stats div
     shipStatsDiv.innerHTML = '';
+    
+    const sortedShips = ships.sort((a, b) => {
+        if (sortOrder === 'type') {
+            // Sort by type
+            if (a.type < b.type) return -1;
+            if (a.type > b.type) return 1;
+        } else if (sortOrder === 'manufacturer') {
+            // Sort by manufacturer
+            if (a.manufacturer < b.manufacturer) return -1;
+            if (a.manufacturer > b.manufacturer) return 1;
+        } else if (sortOrder === 'finalCost') {
+            // Sort by final cost
+            return a.calculateTotalCost() - b.calculateTotalCost();
+        }
 
-    for (const ship of ships) {
+        return 0; // Both are equal
+    })
+    
+
+    for (const ship of sortedShips) {
         // Create a new div for this ship's stats
         const shipDiv = document.createElement('div');
         shipDiv.className = 'ship-stats-block-lite';
