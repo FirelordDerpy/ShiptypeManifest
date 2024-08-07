@@ -6,15 +6,8 @@ import { ShipType, shipTypes } from './shipTypes.js';
 
 const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
 
-
-
-
-
-
 const app = initializeApp(appSettings);
 const db = getDatabase(app);
-
-
 
 function saveShipToFirebase(ship) {
     // Get a reference to the ships node
@@ -336,6 +329,9 @@ function loadShipsFromFirebase() {
             // Display the stats for the ship
             displayShipStats(ship);
             }
+            if (window.location.pathname === '/shiplist.html') {
+            displayShipStatsLite(); // Call the function on 'shiplist.html' page
+        }
     });
 }
 
@@ -349,4 +345,48 @@ populateDropdown('secondary-armament-2', Object.keys(secondaryArm));
 
 loadShipsFromFirebase();
 
+displayShipStatsLite();
 
+
+// Function to display limited ship stats
+function displayShipStatsLite() {
+    // Check if we are on the 'shiplist.html' page
+    if (window.location.pathname !== '/shiplist.html') {
+        return;
+    }
+
+    // Get the ship-stats div
+    const shipStatsDiv = document.getElementById('ship-stats-lite');
+
+    // Check if ship-stats div exists
+    if (!shipStatsDiv) {
+        console.log("The 'ship-stats-lite' div does not exist on this page.");
+        return;
+    }
+
+    // Clear the ship-stats div
+    shipStatsDiv.innerHTML = '';
+
+    for (const ship of ships) {
+        // Create a new div for this ship's stats
+        const shipDiv = document.createElement('div');
+        shipDiv.className = 'ship-stats-block-lite';
+
+        // Only display the desired information
+        shipDiv.innerHTML = `
+            <h2>${ship.name}</h2>
+            <p>Type: ${ship.type}. Manufacturer: ${ship.manufacturer}.</p>
+            <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.calculateTotalPowerLevel()}</p>
+            <p>Hull Points: ${ship.hullPoints + ship.calculateHullPointsBoost()}. Shield and Armor Points: ${ship.shieldArmorPoints + ship.calculateShieldArmorPointsBoost()}</p>
+            <p>Primary Armament: ${ship.primaryArmament}</p>
+            <p>Secondary Armament 1: ${ship.secondaryArmament1}</p>
+            <p>Secondary Armament 2: ${ship.secondaryArmament2}</p>
+            <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
+            <p>Final Cost: ₹ ${ship.calculateTotalCost().toLocaleString()}</p>
+            <p>Description: ${ship.description}</p>
+        `;
+
+        // Prepend this ship's stats to the ship-stats div
+        shipStatsDiv.insertBefore(shipDiv, shipStatsDiv.firstChild);
+    }
+}

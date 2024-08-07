@@ -1,15 +1,22 @@
 /* Add your CSS styles here */
 body {
     font-family: Arial, sans-serif;
-    background-color: lightseagreen;
+    background-color: midnightblue;
+    color: white;
 }
 
 #ship-stats {
     margin-top: 20px;
 }
 .ship-stats-block {
-    border: 2px solid #000; /* Change the color as needed */
+    border: 1px solid yellow; /* Change the color as needed */
     padding: 10px;
     margin-bottom: 10px;
     max-width: 500px;
+}
+
+.ship-stats-block-lite {
+    border: 1px solid yellow; /* Change 'black' to any color you like */
+    padding: 10px; /* Adjust as needed */
+    margin-bottom: 10px; /* Adjust as needed */
 }
