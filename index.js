@@ -297,12 +297,16 @@ displayShipStatsLite();
 
 let sortOrder = 'type'; 
 
-document.getElementById('sort-order').addEventListener('change', function() {
-    if (window.location.pathname === '/shiplist.html') {
-        sortOrder = this.value;
-        displayShipStatsLite();
-    }
-});
+let sortOrderElement = document.getElementById('sort-order');
+if (sortOrderElement) {
+    sortOrderElement.addEventListener('change', function() {
+        if (window.location.pathname === '/shiplist.html') {
+            sortOrder = this.value;
+            displayShipStatsLite();
+        }
+    });
+}
+
 
 
 
