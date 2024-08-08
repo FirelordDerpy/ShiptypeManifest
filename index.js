@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-import { manufacturers } from './shipyard.js';
-import { addons, primaryArm, secondaryArm } from './addons.js';
+import { manufacturers } from '/manufacturers.js';
+import { addons, primaryArm, secondaryArm } from '/addons.js';
 import { ShipType, shipTypes } from './shipTypes.js';
 
 const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
@@ -12,9 +12,16 @@ const db = getDatabase(app);
 function saveShipToFirebase(ship) {
     const shipsRef = ref(db, 'ships');
     const newShipRef = push(shipsRef);
-    set(newShipRef, ship);
-    return newShipRef.key;
+    set(newShipRef, ship)
+        .then(() => {
+            console.log('Ship saved successfully.');
+            return newShipRef.key;
+        })
+        .catch((error) => {
+            console.error('Error saving ship: ', error);
+        });
 }
+
 
 class Ship {
     constructor(type, name, addonNames, primaryArmament, secondaryArmament1, secondaryArmament2,description = '', manufacturer = '') {
@@ -346,12 +353,10 @@ function displayShipStatsLite() {
 
         shipDiv.innerHTML = `
             <h2>${ship.name}</h2>
-            <p>Type: ${ship.type}. Manufacturer: ${ship.manufacturer}.</p>
-            <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.calculateTotalPowerLevel()}</p>
-            <p>Hull Points: ${ship.hullPoints + ship.calculateHullPointsBoost()}. Shield and Armor Points: ${ship.shieldArmorPoints + ship.calculateShieldArmorPointsBoost()}</p>
+            <p>Type: ${ship.type}. Manufacturer: ${ship.manufacturer}. Final Cost: ₹ ${ship.calculateTotalCost().toLocaleString()}</p>
+            <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.calculateTotalPowerLevel()}. Hull Points: ${ship.hullPoints + ship.calculateHullPointsBoost()}. Shield and Armor Points: ${ship.shieldArmorPoints + ship.calculateShieldArmorPointsBoost()}</p>
             <p>Primary Armament: ${ship.primaryArmament}</p>
-            <p>Secondary Armament 1: ${ship.secondaryArmament1}</p>
-            <p>Secondary Armament 2: ${ship.secondaryArmament2}</p>
+            <p>Secondary Armament 1: ${ship.secondaryArmament1}. Secondary Armament 2: ${ship.secondaryArmament2}</p>
             <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
             <p>Final Cost: ₹ ${ship.calculateTotalCost().toLocaleString()}</p>
             <p>Description: ${ship.description}</p>
@@ -360,3 +365,7 @@ function displayShipStatsLite() {
         shipStatsDiv.insertBefore(shipDiv, shipStatsDiv.firstChild);
     }
 }
+
+
+export { ships };
+
