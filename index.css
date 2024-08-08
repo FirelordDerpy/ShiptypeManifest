@@ -1,7 +1,7 @@
 /* Add your CSS styles here */
 body {
     font-family: Arial, sans-serif;
-    background-color: rgb(14, 14, 34);
+    background-color: midnightblue;
     color: white;
 }
 
@@ -9,7 +9,7 @@ body {
     margin-top: 20px;
 }
 .ship-stats-block {
-    border: 1px solid greenyellow; /* Change the color as needed */
+    border: 1px solid red; /* Change the color as needed */
     padding: 10px;
     margin-bottom: 10px;
     max-width: 500px;
