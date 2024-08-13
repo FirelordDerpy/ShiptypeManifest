@@ -1,40 +1,82 @@
+/* Add your CSS styles here */
 body {
     font-family: Arial, sans-serif;
-    background-color: rgb(4, 4, 17);
+    background-color: midnightblue;
     color: white;
 }
 
 #ship-stats {
     margin-top: 20px;
 }
+
+
 .ship-stats-block {
-    border: 1px solid red; 
+    border: 1px solid red; /* Change the color as needed */
     padding: 10px;
     margin-bottom: 10px;
     max-width: 500px;
 }
 
 .ship-stats-block-lite {
-    border: 1px solid yellow; 
-    padding: 10px; 
-    margin-bottom: 10px; 
+    border: 1px solid yellow; /* Change 'black' to any color you like */
+    padding: 10px; /* Adjust as needed */
+    margin-bottom: 10px; /* Adjust as needed */
+}
+
+
+
+
+
+
+
+/* ShipyardsPage */
+
+#ship-quantity {
+    color: white;
+    font-weight: bold;
+    background-color: darkblue;
+    border: 2px dashed black;
+}
+#ship-dropdown {
+    color: white;
+    font-weight: bold;
+    background-color: darkblue;
+    border: 2px dashed black;
+}
+#user-credits {
+    font-size: 20px;
+    font-weight: bold;
+    color: #008000;
+    margin: 10px 0;
+}
+#ship-details {
+    border: 2px solid yellow;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px; 
+}
+#build-info {
+    border: 2px dashed yellow;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
 }
 
 
 /* LINKS LINKS LINKS */
 a {
-    color: white; 
+    color: white; /* Unvisited link */
 }
 
 a:visited {
-    color: goldenrod; 
+    color: goldenrod; /* Visited link */
 }
 
 a:hover {
-    color: red; 
+    color: red; /* Mouse over link */
 }
 
 a:active {
-    color: purple; 
+    color: purple; /* Selected or clicked link */
 }
 /* LINKS LINKS LINKS */
