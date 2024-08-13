@@ -1,4 +1,3 @@
-/* Add your CSS styles here */
 body {
     font-family: Arial, sans-serif;
     background-color: rgb(4, 4, 17);
@@ -9,33 +8,33 @@ body {
     margin-top: 20px;
 }
 .ship-stats-block {
-    border: 1px solid red; /* Change the color as needed */
+    border: 1px solid red; 
     padding: 10px;
     margin-bottom: 10px;
     max-width: 500px;
 }
 
 .ship-stats-block-lite {
-    border: 1px solid yellow; /* Change 'black' to any color you like */
-    padding: 10px; /* Adjust as needed */
-    margin-bottom: 10px; /* Adjust as needed */
+    border: 1px solid yellow; 
+    padding: 10px; 
+    margin-bottom: 10px; 
 }
 
 
 /* LINKS LINKS LINKS */
 a {
-    color: white; /* Unvisited link */
+    color: white; 
 }
 
 a:visited {
-    color: goldenrod; /* Visited link */
+    color: goldenrod; 
 }
 
 a:hover {
-    color: red; /* Mouse over link */
+    color: red; 
 }
 
 a:active {
-    color: purple; /* Selected or clicked link */
+    color: purple; 
 }
 /* LINKS LINKS LINKS */
