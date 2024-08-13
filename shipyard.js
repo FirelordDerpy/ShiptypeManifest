@@ -10,7 +10,7 @@ const db = getDatabase(app);
 
 //'None': { cost: 0, powerLevelBoost: 0, hullPointsBoost: 0, shieldArmorPointsBoost: 0},
 let buildTimeModifier = 1;
-let userCredits = 10000000; 
+let userCredits = 1000000000000; 
 
 
 
@@ -44,6 +44,7 @@ function createShipDropdown() {
     // Append the "Build ship" button to the specific div
     const buildButtonContainer = document.getElementById('build-button-container');
     buildButtonContainer.appendChild(buildButton);
+    const audio = new Audio('/assets/buildShip.wav');
 
     // Fetch ships from Firebase
     const shipsRef = ref(db, 'ships');
@@ -68,6 +69,7 @@ function createShipDropdown() {
         displaySelectedShipStats(shipDropdown.value, this.value);
     });
     buildButton.addEventListener('click', function() {
+                audio.play();
         displayBuildInformation(shipDropdown.value, quantityInput.value);
     });
 }
@@ -161,6 +163,7 @@ function displayBuildInformation(shipName, quantity) {
 
         // Update the displayed user credits
         displayUserCredits();
+        const completeAudio = new Audio('/assets/complete.wav');
 
         // Create a countdown timer
         let timeLeft = buildTime;
@@ -169,6 +172,7 @@ function displayBuildInformation(shipName, quantity) {
                 clearInterval(timer);
                 buildInfo.textContent = `Building ${quantity} ${shipName}(s) cost ₹ ${totalCost.toLocaleString()}. Your remaining credits: ₹ ${userCredits.toLocaleString()}. Status: Ready for Delivery`;
                 buildInfo.style.borderColor = 'green';  // Change the border color to green
+                completeAudio.play();
             } else {
                 buildInfo.textContent = `Building ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} units left)`;
             }
