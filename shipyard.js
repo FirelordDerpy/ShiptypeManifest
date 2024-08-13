@@ -153,7 +153,7 @@ function displayBuildInformation(shipName, quantity) {
         // Create the build information
         const buildInfo = document.createElement('div');
         buildInfo.id = 'build-info';
-        buildInfo.textContent = `Building ${quantity} ${shipName}(s) will take ${buildTime} units and cost ₹ ${totalCost.toLocaleString()}`;
+        buildInfo.textContent = `Building ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Your remaining credits: ₹ ${userCredits.toLocaleString()}. Status: Under Construction`;
 
         // Append the build information to the build queue div
         const buildQueueContainer = document.getElementById('build-queue-container');
@@ -161,8 +161,26 @@ function displayBuildInformation(shipName, quantity) {
 
         // Update the displayed user credits
         displayUserCredits();
+
+        // Create a countdown timer
+        let timeLeft = buildTime;
+        const timer = setInterval(function() {
+            if (timeLeft <= 0.01) {
+                clearInterval(timer);
+                buildInfo.textContent = `Building ${quantity} ${shipName}(s) cost ₹ ${totalCost.toLocaleString()}. Your remaining credits: ₹ ${userCredits.toLocaleString()}. Status: Ready for Delivery`;
+                buildInfo.style.borderColor = 'green';  // Change the border color to green
+            } else {
+                buildInfo.textContent = `Building ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} units left)`;
+            }
+            timeLeft -= 0.1;
+        }, 100);  // Update every 100 milliseconds
     }
 }
+
+
+
+
+
 
 
 window.onload = function() {
