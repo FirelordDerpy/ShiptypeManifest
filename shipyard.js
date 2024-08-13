@@ -20,7 +20,10 @@ let userCredits = 10000000;
 function createShipDropdown() {
     const shipDropdown = document.createElement('select');
     shipDropdown.id = 'ship-dropdown';
-    document.body.appendChild(shipDropdown);
+
+    // Append the dropdown to the specific div
+    const shipDropdownContainer = document.getElementById('ship-dropdown-container');
+    shipDropdownContainer.appendChild(shipDropdown);
 
     // Create a number input for the quantity
     const quantityInput = document.createElement('input');
@@ -28,32 +31,20 @@ function createShipDropdown() {
     quantityInput.type = 'number';
     quantityInput.min = '1';
     quantityInput.value = '1';
-    document.body.appendChild(quantityInput);
+
+    // Append the number input to the specific div
+    const shipQuantityContainer = document.getElementById('ship-quantity-container');
+    shipQuantityContainer.appendChild(quantityInput);
 
     // Create a "Build ship" button
     const buildButton = document.createElement('button');
     buildButton.id = 'build-button';
     buildButton.textContent = 'Build ship';
-    document.body.appendChild(buildButton);
-    
-    
-    // Create a div for the ship stats and the build queue
-    const statsAndQueueDiv = document.createElement('div');
-    statsAndQueueDiv.id = 'stats-and-queue';
-    document.body.appendChild(statsAndQueueDiv);
 
-    // Create the build queue line and text
-    const buildQueueLine = document.createElement('hr');
-    const buildQueueText = document.createElement('div');
-    buildQueueText.textContent = 'Build Queue';
-    statsAndQueueDiv.appendChild(buildQueueLine);
-    statsAndQueueDiv.appendChild(buildQueueText);
-    
-    // Create a div for the build queue
-    const buildQueueDiv = document.createElement('div');
-    buildQueueDiv.id = 'build-queue';
-    statsAndQueueDiv.appendChild(buildQueueDiv);
-    
+    // Append the "Build ship" button to the specific div
+    const buildButtonContainer = document.getElementById('build-button-container');
+    buildButtonContainer.appendChild(buildButton);
+
     // Fetch ships from Firebase
     const shipsRef = ref(db, 'ships');
     onValue(shipsRef, (snapshot) => {
@@ -83,6 +74,7 @@ function createShipDropdown() {
 
 
 
+
 function displaySelectedShipStats(shipName, quantity) {
     const selectedShip = ships.find(ship => ship.name === shipName);
     if (selectedShip) {
@@ -109,11 +101,11 @@ function displaySelectedShipStats(shipName, quantity) {
             <p>Final Cost for ${quantity} ship(s): ₹ ${(selectedShip.calculateTotalCost() * quantity).toLocaleString()}. Build Time: ${buildTime} units</p>
             <p>Description: ${selectedShip.description}</p>
         `;
-        const statsAndQueueDiv = document.getElementById('stats-and-queue');
-        statsAndQueueDiv.insertBefore(shipStats, statsAndQueueDiv.firstChild);
-        document.body.appendChild(shipStats);
+        const shipDetailsContainer = document.getElementById('ship-details-container');
+        shipDetailsContainer.appendChild(shipStats);
     }
 }
+
 
 // Call the function to create the dropdown when the page loads
 window.onload = function() {
@@ -135,16 +127,16 @@ function displayUserCredits() {
     if (oldCredits) {
         oldCredits.remove();
     }
-
     // Display the new credits
     const userCreditsDiv = document.createElement('div');
     userCreditsDiv.id = 'user-credits';
     userCreditsDiv.textContent = `Your credits: ₹ ${userCredits.toLocaleString()}`;
 
-    // Append the credits to the specific div instead of the body
+    // Append the credits to the specific div
     const userCreditsContainer = document.getElementById('user-credits-container');
     userCreditsContainer.appendChild(userCreditsDiv);
 }
+
 
 
 
@@ -161,11 +153,11 @@ function displayBuildInformation(shipName, quantity) {
         // Create the build information
         const buildInfo = document.createElement('div');
         buildInfo.id = 'build-info';
-        buildInfo.textContent = `Building ${quantity} ${shipName}(s) will take ${buildTime} units and cost ₹ ${totalCost.toLocaleString()}. Your remaining credits: ₹ ${userCredits.toLocaleString()}`;
+        buildInfo.textContent = `Building ${quantity} ${shipName}(s) will take ${buildTime} units and cost ₹ ${totalCost.toLocaleString()}`;
 
         // Append the build information to the build queue div
-        const buildQueueDiv = document.getElementById('build-queue');
-        buildQueueDiv.appendChild(buildInfo);
+        const buildQueueContainer = document.getElementById('build-queue-container');
+        buildQueueContainer.appendChild(buildInfo);
 
         // Update the displayed user credits
         displayUserCredits();
