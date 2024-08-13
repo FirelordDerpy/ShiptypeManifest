@@ -1,14 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-import { ref } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-import { onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { getDatabase, set, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 import { ships } from './index.js';
 
 const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
 const app = initializeApp(appSettings);
 const db = getDatabase(app);
 
-//'None': { cost: 0, powerLevelBoost: 0, hullPointsBoost: 0, shieldArmorPointsBoost: 0},
 let buildTimeModifier = 1;
 let userCredits = 1000000000000; 
 
@@ -70,7 +67,7 @@ function createShipDropdown() {
     });
     buildButton.addEventListener('click', function() {
                 audio.play();
-        displayBuildInformation(shipDropdown.value, quantityInput.value);
+        buildQue(shipDropdown.value, quantityInput.value);
     });
 }
 
@@ -141,8 +138,7 @@ function displayUserCredits() {
 
 
 
-
-function displayBuildInformation(shipName, quantity) {
+function buildQue(shipName, quantity) {
     const selectedShip = ships.find(ship => ship.name === shipName);
     if (selectedShip) {
         // Calculate the build time and cost
@@ -170,7 +166,7 @@ function displayBuildInformation(shipName, quantity) {
         const timer = setInterval(function() {
             if (timeLeft <= 0.01) {
                 clearInterval(timer);
-                buildInfo.textContent = `Building ${quantity} ${shipName}(s) cost ₹ ${totalCost.toLocaleString()}. Your remaining credits: ₹ ${userCredits.toLocaleString()}. Status: Ready for Delivery`;
+                buildInfo.textContent = `Building ${quantity} ${shipName}(s) cost ₹ ${totalCost.toLocaleString()}. Status: Ready for Delivery`;
                 buildInfo.style.borderColor = 'green';  // Change the border color to green
                 completeAudio.play();
             } else {
