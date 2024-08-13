@@ -161,9 +161,13 @@ function buildQue(shipName, quantity) {
         displayUserCredits();
         const completeAudio = new Audio('/assets/complete.wav');
 
+        // Save the end time in the local storage
+        const endTime = Date.now() + buildTime * 1000;
+        localStorage.setItem('endTime', endTime);
+
         // Create a countdown timer
-        let timeLeft = buildTime;
         const timer = setInterval(function() {
+            const timeLeft = (localStorage.getItem('endTime') - Date.now()) / 1000;
             if (timeLeft <= 0.01) {
                 clearInterval(timer);
                 buildInfo.textContent = `Building ${quantity} ${shipName}(s) cost ₹ ${totalCost.toLocaleString()}. Status: Ready for Delivery`;
@@ -172,10 +176,28 @@ function buildQue(shipName, quantity) {
             } else {
                 buildInfo.textContent = `Building ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} units left)`;
             }
-            timeLeft -= 0.1;
         }, 100);  // Update every 100 milliseconds
     }
 }
+
+window.onload = function() {
+    if (window.location.pathname === '/shipyards.html') {
+        createShipDropdown();
+        displayUserCredits();
+
+        // Load the remaining time from the local storage
+        const timeLeft = (localStorage.getItem('endTime') - Date.now()) / 1000;
+        if (timeLeft > 0) {
+            // Display the remaining time
+            // You might need to modify this part based on how you want to display the remaining time
+            const buildInfoDiv = document.getElementById('build-info');
+            if (buildInfoDiv) {
+                buildInfoDiv.textContent = `Status: Under Construction (${timeLeft.toFixed(1)} units left)`;
+            }
+        }
+    }
+};
+
 
 
 
