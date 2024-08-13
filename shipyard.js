@@ -204,10 +204,3 @@ window.onload = function() {
 
 
 
-
-window.onload = function() {
-    if (window.location.pathname === '/shipyards.html') {
-        createShipDropdown();
-        displayUserCredits();
-    }
-};
