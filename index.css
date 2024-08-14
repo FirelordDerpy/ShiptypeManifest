@@ -55,12 +55,28 @@ body {
     margin: 10px 0;
     border-radius: 5px; 
 }
-#build-info {
+.build-info {
     border: 2px dashed yellow;
     padding: 10px;
     margin: 10px 0;
     border-radius: 5px;
 }
+
+#build-queue-container{
+        border: 2px solid red;
+        padding: 10px;
+        margin: 10px 0;
+}
+
+.shipBtn {
+        border: 1px dashed salmon;
+        background-color: darkblue;
+        color: white;
+        padding: 0px 0px;
+        margin: 10px 10px;
+}
+/* ShipyardsPage */
+
 
 
 /* LINKS LINKS LINKS */

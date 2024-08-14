@@ -1,14 +1,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 import { getDatabase, set, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 import { ships } from './index.js';
+import { push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
 const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
 const app = initializeApp(appSettings);
 const db = getDatabase(app);
 
-let buildTimeModifier = 1;
+let buildTimeModifier = .05;
 let userCredits = 1000000000000; 
-
+let isEventListenerAdded = false;
 
 
 //SHIP DROP DOWN
@@ -17,6 +18,13 @@ let userCredits = 1000000000000;
 function createShipDropdown() {
     const shipDropdown = document.createElement('select');
     shipDropdown.id = 'ship-dropdown';
+    
+    const placeholderOption = document.createElement('option');
+    placeholderOption.value = '';
+    placeholderOption.text = 'Choose a ship';
+    placeholderOption.selected = true;
+    placeholderOption.disabled = true;
+    shipDropdown.appendChild(placeholderOption);
 
     // Append the dropdown to the specific div
     const shipDropdownContainer = document.getElementById('ship-dropdown-container');
@@ -59,16 +67,19 @@ function createShipDropdown() {
     });
 
     // Add event listeners to update the displayed stats when a ship is selected or the quantity changes, and to display the build information when the button is clicked
-    shipDropdown.addEventListener('change', function() {
-        displaySelectedShipStats(this.value, quantityInput.value);
-    });
-    quantityInput.addEventListener('input', function() {
-        displaySelectedShipStats(shipDropdown.value, this.value);
-    });
-    buildButton.addEventListener('click', function() {
-                audio.play();
-        buildQue(shipDropdown.value, quantityInput.value);
-    });
+        if (!isEventListenerAdded) {  // Check if the event listener has already been added
+        shipDropdown.addEventListener('change', function() {
+            displaySelectedShipStats(this.value, quantityInput.value);
+        });
+        quantityInput.addEventListener('input', function() {
+            displaySelectedShipStats(shipDropdown.value, this.value);
+        });
+        buildButton.addEventListener('click', function() {
+            audio.play();
+            buildQue(shipDropdown.value, quantityInput.value);
+        });
+        isEventListenerAdded = true;  // Set the flag to true after adding the event listener
+    }
 }
 
 
@@ -84,7 +95,8 @@ function displaySelectedShipStats(shipName, quantity) {
         }
 
         // Calculate the build time based on the power level and the build time modifier
-        const buildTime = selectedShip.calculateTotalPowerLevel() * buildTimeModifier;
+        let buildTime = selectedShip.calculateTotalPowerLevel() * buildTimeModifier;
+        buildTime = buildTime.toFixed(1);
 
         // Create the new stats
         const shipStats = document.createElement('div');
@@ -113,11 +125,6 @@ window.onload = function() {
     }
 };
 
-
-
-
-
-// Define the user's credits
 
 // Display the user's credits
 function displayUserCredits() {
@@ -149,13 +156,27 @@ function buildQue(shipName, quantity) {
         userCredits -= totalCost;
 
         // Create the build information
-        const buildInfo = document.createElement('div');
-        buildInfo.id = 'build-info';
-        buildInfo.textContent = `Building ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Your remaining credits: ₹ ${userCredits.toLocaleString()}. Status: Under Construction`;
+        const buildInfo = {
+            shipName: shipName,
+            quantity: quantity,
+            totalCost: totalCost,
+            status: 'Under Construction',
+            timeLeft: buildTime
+        };
+
+        // Save the build information to Firebase under the "genShipYard" folder
+        const buildQueueRef = ref(db, 'genShipYard/buildQueue');
+        const newBuildInfoRef = push(buildQueueRef);
+        set(newBuildInfoRef, buildInfo);
+
+        // Create a div for the build information
+        const buildInfoDiv = document.createElement('div');
+        buildInfoDiv.textContent = `Building ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Your remaining credits: ₹ ${userCredits.toLocaleString()}. Status: Under Construction`;
+        
 
         // Append the build information to the build queue div
         const buildQueueContainer = document.getElementById('build-queue-container');
-        buildQueueContainer.appendChild(buildInfo);
+        buildQueueContainer.appendChild(buildInfoDiv);
 
         // Update the displayed user credits
         displayUserCredits();
@@ -170,33 +191,80 @@ function buildQue(shipName, quantity) {
             const timeLeft = (localStorage.getItem('endTime') - Date.now()) / 1000;
             if (timeLeft <= 0.01) {
                 clearInterval(timer);
-                buildInfo.textContent = `Building ${quantity} ${shipName}(s) cost ₹ ${totalCost.toLocaleString()}. Status: Ready for Delivery`;
-                buildInfo.style.borderColor = 'green';  // Change the border color to green
+                buildInfo.status = 'Ready for Delivery';
+                buildInfoDiv.textContent = `Building ${quantity} ${shipName}(s) cost ₹ ${totalCost.toLocaleString()}. Status: ${buildInfo.status}`;
+                buildInfoDiv.style.borderColor = 'green';  // Change the border color to green
                 completeAudio.play();
+
+                // Update the status in Firebase
+                set(newBuildInfoRef, buildInfo);
             } else {
-                buildInfo.textContent = `Building ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} units left)`;
+                buildInfo.status = `Under Construction (${timeLeft.toFixed(1)} units left)`;
+                buildInfoDiv.textContent = `Building ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Status: ${buildInfo.status}`;
+
+                // Update the status and time left in Firebase
+                set(newBuildInfoRef, buildInfo);
             }
         }, 100);  // Update every 100 milliseconds
     }
 }
+
+
 
 window.onload = function() {
     if (window.location.pathname === '/shipyards.html') {
         createShipDropdown();
         displayUserCredits();
 
-        // Load the remaining time from the local storage
-        const timeLeft = (localStorage.getItem('endTime') - Date.now()) / 1000;
-        if (timeLeft > 0) {
-            // Display the remaining time
-            // You might need to modify this part based on how you want to display the remaining time
-            const buildInfoDiv = document.getElementById('build-info');
-            if (buildInfoDiv) {
-                buildInfoDiv.textContent = `Status: Under Construction (${timeLeft.toFixed(1)} units left)`;
+        // Load the build queue from Firebase
+        const buildQueueRef = ref(db, 'genShipYard/buildQueue');
+        onValue(buildQueueRef, (snapshot) => {
+            const buildQueue = snapshot.val();
+            if (buildQueue) {
+                const buildQueueContainer = document.getElementById('build-queue-container');
+
+                buildQueueContainer.innerHTML = '';
+
+
+                    for (const [key, buildInfo] of Object.entries(buildQueue)) {
+                        // Create a div for the build information
+                        const buildInfoDiv = document.createElement('div');
+                        buildInfoDiv.className = 'build-info';
+                        buildInfoDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: ${buildInfo.status}`;
+
+                        // Create a cancel button
+                        const cancelButton = document.createElement('button');
+                        cancelButton.textContent = 'Cancel';
+                        cancelButton.className = 'shipBtn';
+                        const cancelAudio = new Audio('/assets/cancel.wav');
+                        cancelButton.addEventListener('click', function() {
+                            cancelAudio.play();
+                            const buildInfoRef = ref(db, `genShipYard/buildQueue/${key}`);
+                            set(buildInfoRef, null);
+                            buildInfoDiv.remove();
+                        });
+                        buildInfoDiv.appendChild(cancelButton);
+
+                        // Create a "Deliver" button
+                        const deliverButton = document.createElement('button');
+                        deliverButton.textContent = 'Deliver';
+                        deliverButton.className = 'shipBtn';
+                        const deliverAudio = new Audio('/assets/unitredy.wav');
+                        deliverButton.addEventListener('click', function() {
+                            deliverAudio.play();
+                        });
+                        buildInfoDiv.appendChild(deliverButton);
+                        buildQueueContainer.appendChild(buildInfoDiv);
+                    }
+
             }
-        }
+        });
     }
 };
+
+
+
+
 
 
 
