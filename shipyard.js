@@ -119,11 +119,11 @@ function displaySelectedShipStats(shipName, quantity) {
 
 
 // Call the function to create the dropdown when the page loads
-window.onload = function() {
-    if (window.location.pathname === '/shipyards.html') {
-        createShipDropdown();
-    }
-};
+// window.onload = function() {
+//     if (window.location.pathname === '/shipyards.html') {
+//         createShipDropdown();
+//     }
+// };
 
 
 // Display the user's credits
@@ -212,7 +212,7 @@ function buildQue(shipName, quantity) {
 
 
 window.onload = function() {
-    if (window.location.pathname === '/shipyards.html') {
+    if (window.location.pathname.toLowerCase().includes('shipyards')) {
         createShipDropdown();
         displayUserCredits();
 
