@@ -6,6 +6,7 @@ import { push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-databas
 const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
 const app = initializeApp(appSettings);
 const db = getDatabase(app);
+//const completeAudio = new Audio('/assets/complete.wav');
 
 let buildTimeModifier = 1.5;
 let userCredits = 1000000000000; 
@@ -134,7 +135,7 @@ function displayUserCredits() {
     userCreditsContainer.appendChild(userCreditsDiv);
 }
 
-
+const buildInfoDiv = document.createElement('div');
 
 function buildQue(shipName, quantity) {
     const selectedShip = ships.find(ship => ship.name === shipName);
@@ -154,8 +155,6 @@ function buildQue(shipName, quantity) {
             shipName: shipName,
             quantity: quantity,
             totalCost: totalCost,
-            status: 'Under Construction',
-            timeLeft: buildTime,
             endTime: endTimeString,
         };
 
@@ -164,12 +163,11 @@ function buildQue(shipName, quantity) {
         const newBuildInfoRef = push(buildQueueRef);
         set(newBuildInfoRef, buildInfo);
 
-        // Create a div for the build information
-        const buildInfoDiv = document.createElement('div');
-      
         // Append the build information to the build queue div
         const buildQueueContainer = document.getElementById('build-queue-container');
-        buildQueueContainer.appendChild(buildInfoDiv);
+        if (!buildQueueContainer.contains(buildInfoDiv)) {
+            buildQueueContainer.appendChild(buildInfoDiv);
+        }
 
         // Update the displayed user credits
         displayUserCredits();
@@ -179,47 +177,57 @@ function buildQue(shipName, quantity) {
         const timer = setInterval(function() {
             const now = new Date();
             const timeLeft = (endTime - now) / 1000;
-            if (timeLeft <= 0.01) {
-                clearInterval(timer);
-                buildInfo.status = 'Ready for Delivery';
-                buildInfoDiv.textContent = `ABuilding ${quantity} ${shipName}(s) cost ₹ ${totalCost.toLocaleString()}. Status: ${buildInfo.status}. Ready for delivery at: ${endTimeString}`;
-                buildInfoDiv.style.borderColor = 'green';  // Change the border color to green
-                completeAudio.play();
-
-                // Update the status in Firebase
-                set(newBuildInfoRef, buildInfo);
-            } else {
-                buildInfo.status = `Under Construction (${timeLeft.toFixed(1)} units left)`;
-                buildInfoDiv.textContent = `BBuilding ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Status: ${buildInfo.status}. Ready for delivery at: ${endTimeString}`;
-
-                // Update the status and time left in Firebase
-                set(newBuildInfoRef, buildInfo);
-            }
         }, 1000);  // Update every 100 milliseconds
     }
 }
 
 
-window.onload = function() {
-    if (window.location.pathname.toLowerCase().includes('shipyards')) {
-        createShipDropdown();
-        displayUserCredits();
 
-        // Load the build queue from Firebase
-        const buildQueueRef = ref(db, 'genShipYard/buildQueue');
-        onValue(buildQueueRef, (snapshot) => {
-            const buildQueue = snapshot.val();
-            if (buildQueue) {
-                const buildQueueContainer = document.getElementById('build-queue-container');
+function loadBuildQueue() {
+    // Load the build queue from Firebase
+    const buildQueueRef = ref(db, 'genShipYard/buildQueue');
+    onValue(buildQueueRef, (snapshot) => {
+        const buildQueue = snapshot.val();
+        if (buildQueue) {
+            const buildQueueContainer = document.getElementById('build-queue-container');
 
-                buildQueueContainer.innerHTML = '';
+           buildQueueContainer.innerHTML = '';
 
+            for (const [key, buildInfo] of Object.entries(buildQueue)) {
+                // Create a div for the build information
+                const buildInfoDiv = document.createElement('div');
+                buildInfoDiv.className = 'build-info';
 
-                    for (const [key, buildInfo] of Object.entries(buildQueue)) {
-                        // Create a div for the build information
-                        const buildInfoDiv = document.createElement('div');
-                        buildInfoDiv.className = 'build-info';
-                        buildInfoDiv.textContent = `CBuilding ${buildInfo.quantity} ${buildInfo.shipName}(s) will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: ${buildInfo.status}. Ready for delivery at: ${buildInfo.endTime}`;
+                // Create a div for the build status text
+                const statusDiv = document.createElement('div');
+                buildInfoDiv.appendChild(statusDiv);
+
+                // Check if the build process is already completed
+                const now = new Date();
+                const endTime = new Date(buildInfo.endTime);
+                    if (now < endTime) {
+                    // UNDER CONSTRUCTION
+                    statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction. Ready for delivery at: ${buildInfo.endTime}`;
+                    } else {
+                    // COMPLETE PLACEHOLDER
+                    statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
+                    }
+                    const timer = setInterval(function() {
+                    const now = new Date();
+                    const timeLeft = Math.round((endTime - now) / 1000);
+                    if (timeLeft <= 0.1) {
+                        clearInterval(timer);
+                        // COMPLETED
+                        statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
+                        const completeAudio = new Audio('/assets/complete.wav');
+                        completeAudio.play();
+                    } else {
+                        // UNDER CONSTRUCTION
+                        statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft} units left). Ready for delivery at: ${buildInfo.endTime}`;
+                    }
+                    }, 1000);
+                
+                
                         
                         // Create a cancel button
                         const cancelButton = document.createElement('button');
@@ -231,6 +239,7 @@ window.onload = function() {
                             const buildInfoRef = ref(db, `genShipYard/buildQueue/${key}`);
                             set(buildInfoRef, null);
                             buildInfoDiv.remove();
+                            clearInterval(timer);
                         });
                         buildInfoDiv.appendChild(cancelButton);
 
@@ -256,13 +265,19 @@ window.onload = function() {
 
             }
         });
-    }
+    
 };
 
 
 
 
-
+window.onload = function() {
+    if (window.location.pathname.toLowerCase().includes('shipyards')) {
+        createShipDropdown();
+        displayUserCredits();
+        loadBuildQueue();
+    }
+};
 
 
 
