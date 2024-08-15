@@ -7,7 +7,7 @@ const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.fir
 const app = initializeApp(appSettings);
 const db = getDatabase(app);
 
-let buildTimeModifier = .05;
+let buildTimeModifier = 1.5;
 let userCredits = 1000000000000; 
 let isEventListenerAdded = false;
 
@@ -95,7 +95,7 @@ function displaySelectedShipStats(shipName, quantity) {
         }
 
         // Calculate the build time based on the power level and the build time modifier
-        let buildTime = selectedShip.calculateTotalPowerLevel() * buildTimeModifier;
+        let buildTime = selectedShip.calculateTotalPowerLevel() * buildTimeModifier * 1000;
         buildTime = buildTime.toFixed(1);
 
         // Create the new stats
@@ -116,15 +116,6 @@ function displaySelectedShipStats(shipName, quantity) {
         shipDetailsContainer.appendChild(shipStats);
     }
 }
-
-
-// Call the function to create the dropdown when the page loads
-// window.onload = function() {
-//     if (window.location.pathname === '/shipyards.html') {
-//         createShipDropdown();
-//     }
-// };
-
 
 // Display the user's credits
 function displayUserCredits() {
@@ -154,6 +145,9 @@ function buildQue(shipName, quantity) {
 
         // Deduct the total cost from the user's credits
         userCredits -= totalCost;
+        
+        const endTime = new Date(Date.now() + buildTime * 1000);
+        const endTimeString = endTime.toLocaleString();
 
         // Create the build information
         const buildInfo = {
@@ -161,7 +155,8 @@ function buildQue(shipName, quantity) {
             quantity: quantity,
             totalCost: totalCost,
             status: 'Under Construction',
-            timeLeft: buildTime
+            timeLeft: buildTime,
+            endTime: endTimeString,
         };
 
         // Save the build information to Firebase under the "genShipYard" folder
@@ -171,9 +166,7 @@ function buildQue(shipName, quantity) {
 
         // Create a div for the build information
         const buildInfoDiv = document.createElement('div');
-        buildInfoDiv.textContent = `Building ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Your remaining credits: ₹ ${userCredits.toLocaleString()}. Status: Under Construction`;
-        
-
+      
         // Append the build information to the build queue div
         const buildQueueContainer = document.getElementById('build-queue-container');
         buildQueueContainer.appendChild(buildInfoDiv);
@@ -182,33 +175,26 @@ function buildQue(shipName, quantity) {
         displayUserCredits();
         const completeAudio = new Audio('/assets/complete.wav');
 
-        // Save the end time in the local storage
-        const endTime = Date.now() + buildTime * 1000;
-        localStorage.setItem(newBuildInfoRef.key, endTime)
-
         // Create a countdown timer
         const timer = setInterval(function() {
             const timeLeft = (localStorage.getItem(newBuildInfoRef.key) - Date.now()) / 1000;
             if (timeLeft <= 0.01) {
                 clearInterval(timer);
-                buildInfo.status = 'Ready for Delivery';
-                buildInfoDiv.textContent = `Building ${quantity} ${shipName}(s) cost ₹ ${totalCost.toLocaleString()}. Status: ${buildInfo.status}`;
-                buildInfoDiv.style.borderColor = 'green';  // Change the border color to green
+                buildInfo.status = 'Ready for Delivery'; // Change the border color to green
                 completeAudio.play();
 
                 // Update the status in Firebase
                 set(newBuildInfoRef, buildInfo);
             } else {
                 buildInfo.status = `Under Construction (${timeLeft.toFixed(1)} units left)`;
-                buildInfoDiv.textContent = `Building ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Status: ${buildInfo.status}`;
-
-                // Update the status and time left in Firebase
-                set(newBuildInfoRef, buildInfo);
             }
-        }, 100);  // Update every 100 milliseconds
+            buildInfoDiv.textContent = `CBuilding ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Status: ${buildInfo.status}. Ready for delivery at: ${endTimeString}`;
+
+            // Update the status and time left in Firebase
+            set(newBuildInfoRef, buildInfo);
+        }, 1000);  // Update every 100 milliseconds
     }
 }
-
 
 
 window.onload = function() {
@@ -230,8 +216,8 @@ window.onload = function() {
                         // Create a div for the build information
                         const buildInfoDiv = document.createElement('div');
                         buildInfoDiv.className = 'build-info';
-                        buildInfoDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: ${buildInfo.status}`;
-
+                        buildInfoDiv.textContent = `CBuilding ${buildInfo.quantity} ${buildInfo.shipName}(s) will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: ${buildInfo.status}. Ready for delivery at: ${buildInfo.endTime}`;
+                        
                         // Create a cancel button
                         const cancelButton = document.createElement('button');
                         cancelButton.textContent = 'Cancel';
@@ -256,13 +242,13 @@ window.onload = function() {
                         buildInfoDiv.appendChild(deliverButton);
                         buildQueueContainer.appendChild(buildInfoDiv);
                         
-                        const dateTimeDiv = document.createElement('div');
-                        dateTimeDiv.id = 'date-time';
-                        document.body.appendChild(dateTimeDiv);
+                    const dateTimeDiv = document.createElement('div');
+                    dateTimeDiv.id = 'date-time';
+                    document.body.appendChild(dateTimeDiv);
 
-                        // Update the time
-                        updateTime();
-                        setInterval(updateTime, 1000);
+                    // Update the time
+                    updateTime();
+                    setInterval(updateTime, 1000);
                     }
 
             }
