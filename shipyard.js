@@ -171,7 +171,7 @@ function buildQue(shipName, quantity) {
 
         // Update the displayed user credits
         displayUserCredits();
-        const completeAudio = new Audio('/assets/complete.wav');
+        //const completeAudio = new Audio('/assets/complete.wav');
 
         // Create a countdown timer
         const timer = setInterval(function() {
@@ -212,20 +212,22 @@ function loadBuildQueue() {
                     // COMPLETE PLACEHOLDER
                     statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
                     }
-                    const timer = setInterval(function() {
+                const timer = setInterval(function() {
                     const now = new Date();
-                    const timeLeft = Math.round((endTime - now) / 1000);
-                    if (timeLeft <= 0.1) {
+                    const timeLeft = Math.round((endTime - now) / 100) / 10;  // Get the time left in tenths of a second
+                    if (timeLeft <= 0) {
                         clearInterval(timer);
                         // COMPLETED
                         statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
+                    } else if (timeLeft === 1) {
+                        // PLAY AUDIO
                         const completeAudio = new Audio('/assets/complete.wav');
                         completeAudio.play();
                     } else {
                         // UNDER CONSTRUCTION
-                        statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft} units left). Ready for delivery at: ${buildInfo.endTime}`;
+                        statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} seconds left). Ready for delivery at: ${buildInfo.endTime}`;
                     }
-                    }, 1000);
+                }, 1000);
                 
                 
                         
