@@ -177,21 +177,24 @@ function buildQue(shipName, quantity) {
 
         // Create a countdown timer
         const timer = setInterval(function() {
-            const timeLeft = (localStorage.getItem(newBuildInfoRef.key) - Date.now()) / 1000;
+            const now = new Date();
+            const timeLeft = (endTime - now) / 1000;
             if (timeLeft <= 0.01) {
                 clearInterval(timer);
-                buildInfo.status = 'Ready for Delivery'; // Change the border color to green
+                buildInfo.status = 'Ready for Delivery';
+                buildInfoDiv.textContent = `ABuilding ${quantity} ${shipName}(s) cost ₹ ${totalCost.toLocaleString()}. Status: ${buildInfo.status}. Ready for delivery at: ${endTimeString}`;
+                buildInfoDiv.style.borderColor = 'green';  // Change the border color to green
                 completeAudio.play();
 
                 // Update the status in Firebase
                 set(newBuildInfoRef, buildInfo);
             } else {
                 buildInfo.status = `Under Construction (${timeLeft.toFixed(1)} units left)`;
-            }
-            buildInfoDiv.textContent = `CBuilding ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Status: ${buildInfo.status}. Ready for delivery at: ${endTimeString}`;
+                buildInfoDiv.textContent = `BBuilding ${quantity} ${shipName}(s) will cost ₹ ${totalCost.toLocaleString()}. Status: ${buildInfo.status}. Ready for delivery at: ${endTimeString}`;
 
-            // Update the status and time left in Firebase
-            set(newBuildInfoRef, buildInfo);
+                // Update the status and time left in Firebase
+                set(newBuildInfoRef, buildInfo);
+            }
         }, 1000);  // Update every 100 milliseconds
     }
 }
