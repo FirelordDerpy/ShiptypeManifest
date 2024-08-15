@@ -279,3 +279,11 @@ function updateTime() {
     dateTimeDiv.textContent = `Date: ${dateString}, Time: ${timeString}`;
 }
 
+
+
+//EMERGANCY FIREBASE DELETE BUTTON
+const deleteButton = document.getElementById('delete-button');
+deleteButton.addEventListener('click', function() {
+    const buildQueueRef = ref(db, 'genShipYard');
+    set(buildQueueRef, null);
+});
