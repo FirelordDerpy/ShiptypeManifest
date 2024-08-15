@@ -184,11 +184,11 @@ function buildQue(shipName, quantity) {
 
         // Save the end time in the local storage
         const endTime = Date.now() + buildTime * 1000;
-        localStorage.setItem('endTime', endTime);
+        localStorage.setItem(newBuildInfoRef.key, endTime)
 
         // Create a countdown timer
         const timer = setInterval(function() {
-            const timeLeft = (localStorage.getItem('endTime') - Date.now()) / 1000;
+            const timeLeft = (localStorage.getItem(newBuildInfoRef.key) - Date.now()) / 1000;
             if (timeLeft <= 0.01) {
                 clearInterval(timer);
                 buildInfo.status = 'Ready for Delivery';
@@ -205,7 +205,7 @@ function buildQue(shipName, quantity) {
                 // Update the status and time left in Firebase
                 set(newBuildInfoRef, buildInfo);
             }
-        }, 100);  // Update every 100 milliseconds
+        }, 1000);  // Update every 100 milliseconds
     }
 }
 
