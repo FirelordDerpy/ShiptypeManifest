@@ -205,7 +205,7 @@ function buildQue(shipName, quantity) {
                 // Update the status and time left in Firebase
                 set(newBuildInfoRef, buildInfo);
             }
-        }, 1000);  // Update every 100 milliseconds
+        }, 100);  // Update every 100 milliseconds
     }
 }
 
@@ -255,6 +255,14 @@ window.onload = function() {
                         });
                         buildInfoDiv.appendChild(deliverButton);
                         buildQueueContainer.appendChild(buildInfoDiv);
+                        
+                        const dateTimeDiv = document.createElement('div');
+                        dateTimeDiv.id = 'date-time';
+                        document.body.appendChild(dateTimeDiv);
+
+                        // Update the time
+                        updateTime();
+                        setInterval(updateTime, 1000);
                     }
 
             }
@@ -271,4 +279,14 @@ window.onload = function() {
 
 
 
+
+// Function to update the time 
+
+function updateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString();
+    const dateString = now.toLocaleDateString();
+    const dateTimeDiv = document.getElementById('date-time');
+    dateTimeDiv.textContent = `Date: ${dateString}, Time: ${timeString}`;
+}
 
