@@ -171,7 +171,6 @@ function buildQue(shipName, quantity) {
 
         // Update the displayed user credits
         displayUserCredits();
-        //const completeAudio = new Audio('/assets/complete.wav');
 
         // Create a countdown timer
         const timer = setInterval(function() {
@@ -219,7 +218,7 @@ function loadBuildQueue() {
                         clearInterval(timer);
                         // COMPLETED
                         statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
-                    } else if (timeLeft === 1) {
+                    } else if (timeLeft <= 1.5 && timeLeft > 0.5) {
                         // PLAY AUDIO
                         const completeAudio = new Audio('/assets/complete.wav');
                         completeAudio.play();
