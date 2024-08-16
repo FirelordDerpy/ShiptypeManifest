@@ -6,7 +6,7 @@ import { push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-databas
 const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
 const app = initializeApp(appSettings);
 const db = getDatabase(app);
-const completeAudio = new Audio('assets\complete.wav');
+const completeAudio = new Audio('/assets/complete.wav');
 
 let buildTimeModifier = 1.5;
 let userCredits = 1000000000000; 
@@ -220,7 +220,7 @@ function loadBuildQueue() {
                         clearInterval(timer);
                         // COMPLETED
                         statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
-                    } else if (timeLeft <= .02 && timeLeft > 0.01) {
+                    } else if (timeLeft <= .12 && timeLeft > 0.01) {
                         // PLAY AUDIO
                         //const completeAudio = new Audio('/assets/complete.wav');
                         completeAudio.play();
