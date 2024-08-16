@@ -2,11 +2,27 @@
 
 /* COMMON */
 
+/* TRANSITION WHEN CHANGING PAGES */
+html, body {
+    background-color: MidnightBlue;
+    outline: dashed black;
+    transition: background-color 2.5s ease-in-out, opacity 2.5s ease-in-out;
+
+}
+
+.fade-in {
+    opacity: 1 !important;
+}
+
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: midnightblue;
+    opacity: 0;
     color: white;
 }
+
+
+
+
 
 #volume-slider {
     width: 10%; /* Full-width */

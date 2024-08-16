@@ -214,6 +214,7 @@ if (window.location.pathname.toLowerCase().includes('addships')) {
 
 document.getElementById('new-ship-class-btn').addEventListener('click', function() {
     console.log("New ship");
+    window.newtarg1.play();
     document.getElementById('new-ship-class-form').style.display = 'block';
 });
 
@@ -369,3 +370,28 @@ function displayShipStatsLite() {
 
 export { ships };
 
+
+const links = document.querySelectorAll('a');
+
+links.forEach(link => {
+    link.addEventListener('click', function() {
+        window.beepslct.play();
+    });
+});
+
+window.addEventListener('load', function() {
+    document.body.classList.add('fade-in');
+    document.documentElement.style.backgroundColor = 'MidnightBlue';
+    document.body.style.backgroundColor = 'MidnightBlue';
+});
+
+document.querySelectorAll('a').forEach(function(link) {
+    link.addEventListener('click', function(event) {
+        event.preventDefault();
+        document.documentElement.style.backgroundColor = 'white';
+        document.body.style.backgroundColor = 'white';
+        setTimeout(function() {
+            window.location.href = link.href;
+        }, 1000);
+    });
+});
