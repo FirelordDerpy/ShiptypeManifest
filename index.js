@@ -4,7 +4,7 @@ import { manufacturers } from '/manufacturers.js';
 import { addons, primaryArm, secondaryArm } from '/addons.js';
 import { ShipType, shipTypes } from '/shipTypes.js';
 import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-import { push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+// import { push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
 
 
