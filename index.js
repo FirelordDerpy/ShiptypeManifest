@@ -1,13 +1,13 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+import { app, db, push  } from '/firebaseConfig.js';  // Import the initialized app and database
 import { manufacturers } from '/manufacturers.js';
 import { addons, primaryArm, secondaryArm } from '/addons.js';
-import { ShipType, shipTypes } from './shipTypes.js';
+import { ShipType, shipTypes } from '/shipTypes.js';
+import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
-const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
 
-const app = initializeApp(appSettings);
-const db = getDatabase(app);
+
 
 function saveShipToFirebase(ship) {
     const shipsRef = ref(db, 'ships');
@@ -167,6 +167,7 @@ function displayShipStats() {
                 remove(shipRef);
                 if (shipStatsDiv.contains(shipDiv)) {
                     shipStatsDiv.removeChild(shipDiv);
+                    
                 }
             }
         });

@@ -95,6 +95,13 @@ body {
     background-color: darkblue;
     border: 2px dashed black;
 }
+#client-dropdown {
+    color: white;
+    font-weight: bold;
+    background-color: darkblue;
+    border: 2px dashed black;
+}
+
 #user-credits {
     font-size: 20px;
     font-weight: bold;

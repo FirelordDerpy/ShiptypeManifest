@@ -1,11 +1,12 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+
+import { app, db, push} from '/firebaseConfig.js';
+import { ships } from '/index.js';
 import { getDatabase, set, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-import { ships } from './index.js';
 import { push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
-const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
-const app = initializeApp(appSettings);
-const db = getDatabase(app);
+// Your other code...
+
+
 
 
 let buildTimeModifier = 1.5;
@@ -298,10 +299,14 @@ function updateTime() {
 
 
 //EMERGANCY FIREBASE DELETE BUTTON
+    if (window.location.pathname.toLowerCase().includes('index')) {
+
 const deleteButton = document.getElementById('delete-button');
+
 deleteButton.addEventListener('click', function() {
     const buildQueueRef = ref(db, 'genShipYard');
     set(buildQueueRef, null);
-});
+    
+})};
 
 
