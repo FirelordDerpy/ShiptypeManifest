@@ -19,3 +19,9 @@
 //     volumeSlider.value = 1;
 // };
     // <input type="range" min="0" max="1" step="0.01" id="volume-slider">
+
+    window.completeAudio = new Audio('/assets/complete.wav'); completeAudio.volume = 0.5;    
+    window.bldaudio = new Audio('/assets/buildShip.wav'); bldaudio.volume = 0.5;
+    window.cancelAudio = new Audio('/assets/cancel.wav');cancelAudio.volume = 0.5;
+    window.deliverAudio = new Audio('/assets/unitredy.wav');deliverAudio.volume = 0.5;
+    
