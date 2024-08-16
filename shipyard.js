@@ -6,7 +6,7 @@ import { push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-databas
 const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
 const app = initializeApp(appSettings);
 const db = getDatabase(app);
-//const completeAudio = new Audio('/assets/complete.wav');
+const completeAudio = new Audio('/assets/complete.wav');
 
 let buildTimeModifier = 1.5;
 let userCredits = 1000000000000; 
@@ -211,22 +211,25 @@ function loadBuildQueue() {
                     // COMPLETE PLACEHOLDER
                     statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
                     }
-                const timer = setInterval(function() {
+                    
+                    let audioPlayed = false;
+                    const timer = setInterval(function() {
                     const now = new Date();
                     const timeLeft = Math.round((endTime - now) / 100) / 10;  // Get the time left in tenths of a second
                     if (timeLeft <= 0) {
                         clearInterval(timer);
                         // COMPLETED
                         statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
-                    } else if (timeLeft <= 1.5 && timeLeft > 0.5) {
+                    } else if (timeLeft <= .02 && timeLeft > 0.01) {
                         // PLAY AUDIO
-                        const completeAudio = new Audio('/assets/complete.wav');
+                        //const completeAudio = new Audio('/assets/complete.wav');
                         completeAudio.play();
+                        audioPlayed = true;
                     } else {
                         // UNDER CONSTRUCTION
                         statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} seconds left). Ready for delivery at: ${buildInfo.endTime}`;
                     }
-                }, 1000);
+                }, 100);
                 
                 
                         
