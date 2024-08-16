@@ -8,10 +8,10 @@ const app = initializeApp(appSettings);
 const db = getDatabase(app);
 
 //Audio files
-const completeAudio = new Audio('/assets/complete.wav'); completeAudio.volume = 0.1;    
-const bldaudio = new Audio('/assets/buildShip.wav'); bldaudio.volume = 0.1;
-const cancelAudio = new Audio('/assets/cancel.wav');cancelAudio.volume = 0.1;
-const deliverAudio = new Audio('/assets/unitredy.wav');deliverAudio.volume = 0.1;
+const completeAudio = new Audio('/assets/complete.wav'); completeAudio.volume = 0.5;    
+const bldaudio = new Audio('/assets/buildShip.wav'); bldaudio.volume = 0.5;
+const cancelAudio = new Audio('/assets/cancel.wav');cancelAudio.volume = 0.5;
+const deliverAudio = new Audio('/assets/unitredy.wav');deliverAudio.volume = 0.5;
 
 
 
