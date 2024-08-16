@@ -1,29 +1,21 @@
-const audio1 = new Audio('/assets/buildShip.wav');
-const audio2 = new Audio('/assets/cancel.wav');
-const audio3 = new Audio('/assets/complete.wav');
-const audio4 = new Audio('/assets/unitredy.wav');
+// window.audio1 = new Audio('/assets/buildShip.wav');
+// window.audio2 = new Audio('/assets/cancel.wav');
+// window.audio3 = new Audio('/assets/complete.wav');
+// window.audio4 = new Audio('/assets/unitredy.wav');
 
-const audios = [audio1, audio2, audio3, audio4];
+// const audios = [window.audio1, window.audio2, window.audio3, window.audio4];
 
-const volumeUpButton = document.getElementById('volume-up');
-const volumeDownButton = document.getElementById('volume-down');
 
-volumeUpButton.addEventListener('click', function() {
-    // Increase the volume for each audio object
-    audios.forEach(audio => {
-        audio.volume = Math.min(1, audio.volume + .1);
-        console.log(audio.volume);
-    });
-    console.log('Volume up button clicked');
-    
-});
 
-volumeDownButton.addEventListener('click', function() {
-    // Decrease the volume for each audio object
-    audios.forEach(audio => {
-        audio.volume = Math.max(0, audio.volume - .1);
-        console.log(audio.volume);
-    });
-    console.log('Volume down button clicked');
-    
-});
+// const volumeSlider = document.getElementById('volume-slider');
+// volumeSlider.addEventListener('input', function() {
+//     const volume = this.value;
+//     audios.forEach(audio => {
+//         audio.volume = volume;
+//     });
+// });
+
+// window.onload = function() {
+//     volumeSlider.value = 1;
+// };
+    // <input type="range" min="0" max="1" step="0.01" id="volume-slider">

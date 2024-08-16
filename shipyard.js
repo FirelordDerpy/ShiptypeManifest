@@ -6,7 +6,15 @@ import { push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-databas
 const appSettings = { databaseURL: "https://shiptypemanifest009-default-rtdb.firebaseio.com/" };
 const app = initializeApp(appSettings);
 const db = getDatabase(app);
-const completeAudio = new Audio('/assets/complete.wav');
+
+//Audio files
+const completeAudio = new Audio('/assets/complete.wav'); completeAudio.volume = 0.1;    
+const bldaudio = new Audio('/assets/buildShip.wav'); bldaudio.volume = 0.1;
+const cancelAudio = new Audio('/assets/cancel.wav');cancelAudio.volume = 0.1;
+const deliverAudio = new Audio('/assets/unitredy.wav');deliverAudio.volume = 0.1;
+
+
+
 
 let buildTimeModifier = 1.5;
 let userCredits = 1000000000000; 
@@ -50,7 +58,6 @@ function createShipDropdown() {
     // Append the "Build ship" button to the specific div
     const buildButtonContainer = document.getElementById('build-button-container');
     buildButtonContainer.appendChild(buildButton);
-    const audio = new Audio('/assets/buildShip.wav');
 
     // Fetch ships from Firebase
     const shipsRef = ref(db, 'ships');
@@ -76,7 +83,7 @@ function createShipDropdown() {
             displaySelectedShipStats(shipDropdown.value, this.value);
         });
         buildButton.addEventListener('click', function() {
-            audio.play();
+            bldaudio.play();
             buildQue(shipDropdown.value, quantityInput.value);
         });
         isEventListenerAdded = true;  // Set the flag to true after adding the event listener
@@ -237,7 +244,6 @@ function loadBuildQueue() {
                         const cancelButton = document.createElement('button');
                         cancelButton.textContent = 'Cancel';
                         cancelButton.className = 'shipBtn';
-                        const cancelAudio = new Audio('/assets/cancel.wav');
                         cancelButton.addEventListener('click', function() {
                             cancelAudio.play();
                             const buildInfoRef = ref(db, `genShipYard/buildQueue/${key}`);
@@ -251,7 +257,6 @@ function loadBuildQueue() {
                         const deliverButton = document.createElement('button');
                         deliverButton.textContent = 'Deliver';
                         deliverButton.className = 'shipBtn';
-                        const deliverAudio = new Audio('/assets/unitredy.wav');
                         deliverButton.addEventListener('click', function() {
                             deliverAudio.play();
                         });
@@ -306,3 +311,5 @@ deleteButton.addEventListener('click', function() {
     const buildQueueRef = ref(db, 'genShipYard');
     set(buildQueueRef, null);
 });
+
+
