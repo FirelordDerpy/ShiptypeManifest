@@ -2,7 +2,7 @@
 import { app, db, push} from '/firebaseConfig.js';
 import { ships } from '/index.js';
 import { getDatabase, set, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-import { push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+// import { push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
 // Your other code...
 
