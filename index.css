@@ -1,14 +1,49 @@
 /* Add your CSS styles here */
+
+/* COMMON */
+
 body {
     font-family: Arial, sans-serif;
     background-color: midnightblue;
     color: white;
 }
 
+#volume-slider {
+    width: 10%; /* Full-width */
+    height: 5px; /* Specified height */
+    background: #d3d3d3; /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    transition: opacity .2s; /* Transition effect on hover */
+}
+
+#volume-slider:hover {
+    opacity: 1; /* Fully visible on hover */
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #4CAF50; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+#volume-slider::-moz-range-thumb {
+    width: 5px; /* Set a specific slider handle width */
+    height: 15px; /* Slider handle height */
+    background: yellow; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+
+
 #ship-stats {
     margin-top: 20px;
 }
 
+/* COMMON */
 
 .ship-stats-block {
     border: 1px solid red; /* Change the color as needed */
@@ -22,6 +57,7 @@ body {
     padding: 10px; /* Adjust as needed */
     margin-bottom: 10px; /* Adjust as needed */
 }
+
 
 
 
