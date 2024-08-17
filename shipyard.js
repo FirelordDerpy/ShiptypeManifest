@@ -243,8 +243,8 @@ async function buildQue(shipName, quantity) {
 
         } else {
             console.log("Not enough credits!");
-            alert("Not enough credits!");
             window.nocash1.play();
+            alert("Not enough credits!");
         }
     }
 }
