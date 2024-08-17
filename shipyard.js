@@ -201,42 +201,42 @@ async function buildQue(shipName, quantity) {
             clientCredits -= totalCost;
             set(clientRef, { ...client, credits: clientCredits });
 
-            // Rest of your code...
+            const endTime = new Date(Date.now() + buildTime * 1000);
+            const endTimeString = endTime.toLocaleString();
+
+            // Create the build information
+            const buildInfo = {
+                shipName: shipName,
+                quantity: quantity,
+                totalCost: totalCost,
+                endTime: endTimeString,
+                client: client.name
+            };
+
+            // Save the build information to Firebase under the "genShipYard" folder
+            const buildQueueRef = ref(db, 'genShipYard/buildQueue');
+            const newBuildInfoRef = push(buildQueueRef);
+            set(newBuildInfoRef, buildInfo);
+
+            // Append the build information to the build queue div
+            const buildQueueContainer = document.getElementById('build-queue-container');
+            if (!buildQueueContainer.contains(buildInfoDiv)) {
+                buildQueueContainer.appendChild(buildInfoDiv);
+            }
+
+            // Create a countdown timer
+            const timer = setInterval(function() {
+                const now = new Date();
+                const timeLeft = (endTime - now) / 1000;
+            }, 1000);  // Update every 100 milliseconds
         } else {
             console.log("Not enough credits!");
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = "Not enough credits!";
         }
-
-        const endTime = new Date(Date.now() + buildTime * 1000);
-        const endTimeString = endTime.toLocaleString();
-
-        // Create the build information
-        const buildInfo = {
-            shipName: shipName,
-            quantity: quantity,
-            totalCost: totalCost,
-            endTime: endTimeString,
-            client: client.name
-        };
-
-        // Save the build information to Firebase under the "genShipYard" folder
-        const buildQueueRef = ref(db, 'genShipYard/buildQueue');
-        const newBuildInfoRef = push(buildQueueRef);
-        set(newBuildInfoRef, buildInfo);
-
-        // Append the build information to the build queue div
-        const buildQueueContainer = document.getElementById('build-queue-container');
-        if (!buildQueueContainer.contains(buildInfoDiv)) {
-            buildQueueContainer.appendChild(buildInfoDiv);
-        }
-
-
-        // Create a countdown timer
-        const timer = setInterval(function() {
-            const now = new Date();
-            const timeLeft = (endTime - now) / 1000;
-        }, 1000);  // Update every 100 milliseconds
     }
 }
+
 
 
 

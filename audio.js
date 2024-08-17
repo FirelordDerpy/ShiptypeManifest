@@ -55,6 +55,9 @@ window.sonpulse.volume = 0.5;
 window.unitredy = new Audio('/assets/unitredy.wav');
 window.unitredy.volume = 0.5;
 
+window.nocash1 = new Audio('/assets/nocash1.wav');
+window.unitredy.volume = 0.5;
+
 const audios = [
     window.completeAudio, 
     window.bldaudio, 
@@ -74,20 +77,24 @@ const audios = [
     window.newtarg1,
     window.scoldy1,
     window.sonpulse,
-    window.unitredy
+    window.unitredy,
+    window.nocash1
 ];
 
 
 const volumeSlider = document.getElementById('volume-slider');
+
+// Load the volume level from localStorage if it exists, otherwise set to 1
+const savedVolume = localStorage.getItem('volume');
+volumeSlider.value = savedVolume !== null ? savedVolume : 1;
+
 volumeSlider.addEventListener('input', function() {
     const volume = this.value;
     audios.forEach(audio => {
         audio.volume = volume;
     });
+    // Save the volume level to localStorage
+    localStorage.setItem('volume', volume);
 });
-
-window.onload = function() {
-    volumeSlider.value = 1;
-};
 
     // <input type="range" min="0" max="1" step="0.01" id="volume-slider">
