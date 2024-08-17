@@ -1,13 +1,15 @@
-import { app, db, push} from '/firebaseConfig.js';
+import { app, db, push,} from '/firebaseConfig.js';
 import { ships } from '/index.js';
-import { getDatabase, set, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { getDatabase, set, ref, onValue, get } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
 
 
-
-
+// TO REPLACE 
 let buildTimeModifier = 1.5;
-let userCredits = 1000000000000; 
+
+// TO REPLACE 
+
+
 let isEventListenerAdded = false;
 
 
@@ -83,7 +85,6 @@ function createShipDropdown() {
 //CLIENT CLIENT
 
 
-
 function createClientDropdown() {
     const clientDropdown = document.createElement('select');
     clientDropdown.id = 'client-dropdown';
@@ -106,12 +107,31 @@ function createClientDropdown() {
         for (const key in clients) {
             const clientName = clients[key].name;
             const option = document.createElement('option');
-            option.value = clientName;
+            option.value = key;  // Store the client's key as the option value
             option.text = clientName;
             clientDropdown.appendChild(option);
         }
     });
+
+    // Add an event listener to display the client's credits when a client is selected
+    clientDropdown.addEventListener('change', function() {
+        displayClientCredits(this.value);
+    });
 }
+
+function displayClientCredits(clientKey) {
+    // Fetch the client's credits from Firebase
+    const clientRef = ref(db, `factions/clients/${clientKey}`);
+    onValue(clientRef, (snapshot) => {
+        const client = snapshot.val();
+        const clientCredits = client.credits;
+
+        // Display the client's credits
+        const clientCreditsDiv = document.getElementById('client-credits');
+        clientCreditsDiv.textContent = `Client's credits: ₹ ${clientCredits.toLocaleString()}`;
+    });
+}
+
 //CLIENT CLIENT
 
 
@@ -153,37 +173,39 @@ function displaySelectedShipStats(shipName, quantity) {
     }
 }
 
-// Display the user's credits
-function displayUserCredits() {
-    // Clear the old credits
-    const oldCredits = document.getElementById('user-credits');
-    if (oldCredits) {
-        oldCredits.remove();
-    }
-    // Display the new credits
-    const userCreditsDiv = document.createElement('div');
-    userCreditsDiv.id = 'user-credits';
-    userCreditsDiv.textContent = `Your credits: ₹ ${userCredits.toLocaleString()}`;
 
-    // Append the credits to the specific div
-    const userCreditsContainer = document.getElementById('user-credits-container');
-    userCreditsContainer.appendChild(userCreditsDiv);
-}
+
+
+
+
+
 
 const buildInfoDiv = document.createElement('div');
 
-function buildQue(shipName, quantity) {
+async function buildQue(shipName, quantity) {
     const clientDropdown = document.getElementById('client-dropdown');
-    const selectedClient = clientDropdown.value;
+    const selectedClientKey = clientDropdown.value;
     const selectedShip = ships.find(ship => ship.name === shipName);
     if (selectedShip) {
         // Calculate the build time and cost
         const buildTime = selectedShip.calculateTotalPowerLevel() * buildTimeModifier;
         const totalCost = selectedShip.calculateTotalCost() * quantity;
-
-        // Deduct the total cost from the user's credits
-        userCredits -= totalCost;
         
+        const clientRef = ref(db, `factions/clients/${selectedClientKey}`);
+        const snapshot = await get(clientRef);
+        const client = snapshot.val();
+        let clientCredits = client.credits;
+
+        // Check if the client has enough credits
+        if (clientCredits >= totalCost) {
+            clientCredits -= totalCost;
+            set(clientRef, { ...client, credits: clientCredits });
+
+            // Rest of your code...
+        } else {
+            console.log("Not enough credits!");
+        }
+
         const endTime = new Date(Date.now() + buildTime * 1000);
         const endTimeString = endTime.toLocaleString();
 
@@ -193,7 +215,7 @@ function buildQue(shipName, quantity) {
             quantity: quantity,
             totalCost: totalCost,
             endTime: endTimeString,
-            client: selectedClient
+            client: client.name
         };
 
         // Save the build information to Firebase under the "genShipYard" folder
@@ -207,8 +229,6 @@ function buildQue(shipName, quantity) {
             buildQueueContainer.appendChild(buildInfoDiv);
         }
 
-        // Update the displayed user credits
-        displayUserCredits();
 
         // Create a countdown timer
         const timer = setInterval(function() {
@@ -314,7 +334,6 @@ function loadBuildQueue() {
 window.onload = function() {
     if (window.location.pathname.toLowerCase().includes('shipyards')) {
         createShipDropdown();
-        displayUserCredits();
         loadBuildQueue();
         createClientDropdown();
     }
