@@ -8,7 +8,6 @@ import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/
 
 
 
-
 function saveShipToFirebase(ship) {
     const shipsRef = ref(db, 'ships');
     const newShipRef = push(shipsRef);

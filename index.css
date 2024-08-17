@@ -16,7 +16,7 @@ html, body {
 
 
 body {
-    opacity: 50;
+    opacity: 0;
     color: white;
 }
 
@@ -155,3 +155,55 @@ a:active {
     color: purple; /* Selected or clicked link */
 }
 /* LINKS LINKS LINKS */
+
+
+/* FACTIONS PAGE */
+/* styles.css */
+
+/* Style the input field */
+#client-input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: darkcyan;
+}
+
+/* Style the buttons */
+#add-client-button{
+    margin: 0px 10px 0px 10px;
+    padding: 5px 10px;
+    font-size: 25px;
+    border: none;
+    border-radius: 5px;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+}
+.delete-button {
+    margin: 0px 10px 0px 10px;
+    padding: 5px 10px;
+    font-size: 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+}
+/* Style the client list */
+#client-list {
+    list-style-type: none;
+    background-color: #008000;
+    padding: 0;
+    width: 200px;
+}
+
+/* Style each client */
+#client-list li {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    border: dashed red;
+    background-color: rebeccapurple;
+}
