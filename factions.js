@@ -56,28 +56,41 @@ function displayClients() {
             clientDiv.textContent = `${clientName} - ₹${clientCredits}`;
             listItem.appendChild(clientDiv);
 
-            // Create a delete button
+            // Create an "Adjust Credits" button
+           const adjustButton = document.createElement('button');
+            adjustButton.textContent = 'Adjust Credits';
+            adjustButton.addEventListener('click', function() {
+                let newCredits = prompt('Enter the new amount of credits:');
+                // Check if the input is a positive integer
+                if (newCredits && Number.isInteger(+newCredits) && +newCredits >= 0) {
+                    // Update the client's credits in Firebase
+                    const clientRef = ref(db, `factions/clients/${key}`);
+                    set(clientRef, { name: clientName, credits: newCredits });
+                } else {
+                    alert('Invalid input. Please enter a positive integer.');
+                }
+            });
+            listItem.appendChild(adjustButton);
+
+            // Create a "Delete" button
             const deleteButton = document.createElement('button');
-            deleteButton.className = 'delete-button';
             deleteButton.textContent = 'Delete';
             deleteButton.addEventListener('click', function() {
                 // Remove the client name from Firebase
-                const clientRef = ref(db, 'factions/clients/' + key);
+                const clientRef = ref(db, `factions/clients/${key}`);
                 remove(clientRef);
 
                 // Remove the list item from the HTML page
                 listItem.remove();
             });
-
-            // Add the delete button to the list item
             listItem.appendChild(deleteButton);
 
             // Add the list item to the list
             clientList.appendChild(listItem);
-
         }
     });
 }
+
 
 
 
