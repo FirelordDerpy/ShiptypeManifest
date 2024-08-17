@@ -1,9 +1,7 @@
-
 import { app, db, push} from '/firebaseConfig.js';
 import { ships } from '/index.js';
 import { getDatabase, set, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
-// Your other code...
 
 
 
@@ -82,11 +80,47 @@ function createShipDropdown() {
     }
 }
 
+//CLIENT CLIENT
+
+
+
+function createClientDropdown() {
+    const clientDropdown = document.createElement('select');
+    clientDropdown.id = 'client-dropdown';
+    
+    const placeholderOption = document.createElement('option');
+    placeholderOption.value = '';
+    placeholderOption.text = 'Choose a client';
+    placeholderOption.selected = true;
+    placeholderOption.disabled = true;
+    clientDropdown.appendChild(placeholderOption);
+
+    // Append the dropdown to the specific div
+    const clientDropdownContainer = document.getElementById('client-dropdown-container');
+    clientDropdownContainer.appendChild(clientDropdown);
+
+    // Fetch clients from Firebase
+    const clientsRef = ref(db, 'factions/clients');
+    onValue(clientsRef, (snapshot) => {
+        const clients = snapshot.val();
+        for (const key in clients) {
+            const clientName = clients[key].name;
+            const option = document.createElement('option');
+            option.value = clientName;
+            option.text = clientName;
+            clientDropdown.appendChild(option);
+        }
+    });
+}
+//CLIENT CLIENT
 
 
 
 function displaySelectedShipStats(shipName, quantity) {
     const selectedShip = ships.find(ship => ship.name === shipName);
+    const clientDropdown = document.getElementById('client-dropdown');
+    const selectedClient = clientDropdown.value;
+
     if (selectedShip) {
         // Clear the old stats
         const oldStats = document.getElementById('ship-details');
@@ -111,6 +145,8 @@ function displaySelectedShipStats(shipName, quantity) {
             <p>Addons: ${selectedShip.addons.map(addon => addon.name).join(', ')}</p>
             <p>Final Cost for ${quantity} ship(s): ₹ ${(selectedShip.calculateTotalCost() * quantity).toLocaleString()}. Build Time: ${buildTime} units</p>
             <p>Description: ${selectedShip.description}</p>
+
+
         `;
         const shipDetailsContainer = document.getElementById('ship-details-container');
         shipDetailsContainer.appendChild(shipStats);
@@ -137,6 +173,8 @@ function displayUserCredits() {
 const buildInfoDiv = document.createElement('div');
 
 function buildQue(shipName, quantity) {
+    const clientDropdown = document.getElementById('client-dropdown');
+    const selectedClient = clientDropdown.value;
     const selectedShip = ships.find(ship => ship.name === shipName);
     if (selectedShip) {
         // Calculate the build time and cost
@@ -155,6 +193,7 @@ function buildQue(shipName, quantity) {
             quantity: quantity,
             totalCost: totalCost,
             endTime: endTimeString,
+            client: selectedClient
         };
 
         // Save the build information to Firebase under the "genShipYard" folder
@@ -205,10 +244,10 @@ function loadBuildQueue() {
                 const endTime = new Date(buildInfo.endTime);
                     if (now < endTime) {
                     // UNDER CONSTRUCTION
-                    statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction. Ready for delivery at: ${buildInfo.endTime}`;
+                    statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction. Ready for delivery at: ${buildInfo.endTime}`;
                     } else {
                     // COMPLETE PLACEHOLDER
-                    statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
+                    statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
                     }
                     
                     let audioPlayed = false;
@@ -218,7 +257,7 @@ function loadBuildQueue() {
                     if (timeLeft <= 0) {
                         clearInterval(timer);
                         // COMPLETED
-                        statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
+                        statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
                     } else if (timeLeft <= .12 && timeLeft > 0.01) {
                         // PLAY AUDIO
                         //const completeAudio = new Audio('/assets/complete.wav');
@@ -226,7 +265,7 @@ function loadBuildQueue() {
                         audioPlayed = true;
                     } else {
                         // UNDER CONSTRUCTION
-                        statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} seconds left). Ready for delivery at: ${buildInfo.endTime}`;
+                        statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} seconds left). Ready for delivery at: ${buildInfo.endTime}`;
                     }
                 }, 100);
                 
@@ -277,6 +316,7 @@ window.onload = function() {
         createShipDropdown();
         displayUserCredits();
         loadBuildQueue();
+        createClientDropdown();
     }
 };
 
