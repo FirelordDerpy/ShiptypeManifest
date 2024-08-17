@@ -158,10 +158,16 @@ a:active {
 
 
 /* FACTIONS PAGE */
-/* styles.css */
 
 /* Style the input field */
 #client-input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: darkcyan;
+}
+#client-credits {
     padding: 10px;
     font-size: 16px;
     border-radius: 5px;

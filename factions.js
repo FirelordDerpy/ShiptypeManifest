@@ -8,26 +8,29 @@ let clients = JSON.parse(localStorage.getItem('clients')) || [];
 
 function addClient() {
     const clientName = clientInput.value;
-    if (clientName) {
-        // Add the client name to the list on the HTML page
+    const clientCreditsInput = document.getElementById('client-credits');
+    const clientCredits = clientCreditsInput.value;
+    if (clientName && clientCredits) {
+        // Add the client name and credits to the list on the HTML page
         const listItem = document.createElement('li');
-        listItem.textContent = clientName;
+        listItem.textContent = `${clientName} - ₹${clientCredits}`;
         clientList.appendChild(listItem);
 
-        // Upload the client name to Firebase
+        // Upload the client name and credits to Firebase
         const clientsRef = ref(db, 'factions/clients');
         const newClientRef = push(clientsRef);
-        set(newClientRef, { name: clientName })
+        set(newClientRef, { name: clientName, credits: clientCredits })
             .then(() => {
-                console.log('Client name uploaded successfully.');  // Log a success message
-                displayClients();  // Call displayClients after the client name has been uploaded
+                console.log('Client data uploaded successfully.');  // Log a success message
+                displayClients();  // Call displayClients after the client data has been uploaded
             })
             .catch((error) => {
-                console.error('Error uploading client name: ', error);
+                console.error('Error uploading client data: ', error);
             });
 
-        // Clear the input field
+        // Clear the input fields
         clientInput.value = '';
+        clientCreditsInput.value = '';
     }
 }
 
@@ -43,14 +46,14 @@ function displayClients() {
         const clients = snapshot.val();
         for (const key in clients) {
             const clientName = clients[key].name;
+            const clientCredits = clients[key].credits;
 
-            // Add each client name to the list on the HTML page
-            // Add each client name to the list on the HTML page
+            // Add each client name and credits to the list on the HTML page
             const listItem = document.createElement('li');
 
-            // Create a div for the client name
+            // Create a div for the client data
             const clientDiv = document.createElement('div');
-            clientDiv.textContent = clientName;
+            clientDiv.textContent = `${clientName} - ₹${clientCredits}`;
             listItem.appendChild(clientDiv);
 
             // Create a delete button
