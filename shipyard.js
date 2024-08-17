@@ -75,49 +75,59 @@ function createShipDropdown() {
             displaySelectedShipStats(shipDropdown.value, this.value);
         });
         buildButton.addEventListener('click', function() {
-            bldaudio.play();
+            
             buildQue(shipDropdown.value, quantityInput.value);
         });
         isEventListenerAdded = true;  // Set the flag to true after adding the event listener
+        
     }
 }
 
 //CLIENT CLIENT
 
 
-function createClientDropdown() {
-    const clientDropdown = document.createElement('select');
-    clientDropdown.id = 'client-dropdown';
+async function createClientDropdown() {
+    const clientDropdown = document.getElementById('client-dropdown');
+    
+    // If the dropdown already exists, remove it
+    if (clientDropdown) {
+        clientDropdown.remove();
+    }
+
+    // Create a new dropdown
+    const newClientDropdown = document.createElement('select');
+    newClientDropdown.id = 'client-dropdown';
     
     const placeholderOption = document.createElement('option');
     placeholderOption.value = '';
     placeholderOption.text = 'Choose a client';
     placeholderOption.selected = true;
     placeholderOption.disabled = true;
-    clientDropdown.appendChild(placeholderOption);
+    newClientDropdown.appendChild(placeholderOption);
 
     // Append the dropdown to the specific div
     const clientDropdownContainer = document.getElementById('client-dropdown-container');
-    clientDropdownContainer.appendChild(clientDropdown);
+    clientDropdownContainer.appendChild(newClientDropdown);
 
     // Fetch clients from Firebase
     const clientsRef = ref(db, 'factions/clients');
-    onValue(clientsRef, (snapshot) => {
-        const clients = snapshot.val();
-        for (const key in clients) {
-            const clientName = clients[key].name;
-            const option = document.createElement('option');
-            option.value = key;  // Store the client's key as the option value
-            option.text = clientName;
-            clientDropdown.appendChild(option);
-        }
-    });
+    const snapshot = await get(clientsRef);
+    const clients = snapshot.val();
+    for (const key in clients) {
+        const clientName = clients[key].name;
+        const option = document.createElement('option');
+        option.value = key;  // Store the client's key as the option value
+        option.text = clientName;
+        newClientDropdown.appendChild(option);
+    }
 
     // Add an event listener to display the client's credits when a client is selected
-    clientDropdown.addEventListener('change', function() {
+    newClientDropdown.addEventListener('change', function() {
         displayClientCredits(this.value);
     });
 }
+
+
 
 function displayClientCredits(clientKey) {
     // Fetch the client's credits from Firebase
@@ -229,10 +239,12 @@ async function buildQue(shipName, quantity) {
                 const now = new Date();
                 const timeLeft = (endTime - now) / 1000;
             }, 1000);  // Update every 100 milliseconds
+            bldaudio.play();
+
         } else {
             console.log("Not enough credits!");
-            const messageDiv = document.getElementById('message');
-            messageDiv.textContent = "Not enough credits!";
+            alert("Not enough credits!");
+            window.nocash1.play();
         }
     }
 }
