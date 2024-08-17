@@ -161,17 +161,20 @@ function displayShipStats() {
         shipStatsDiv.insertBefore(shipDiv, shipStatsDiv.firstChild);
         
         shipDiv.querySelector('.delete-btn').addEventListener('click', function() {
+            bleep17.play();
             if (window.confirm('Are you sure you want to delete this ship?')) {
                 const shipRef = ref(db, 'ships/' + ship.id);
                 remove(shipRef);
                 if (shipStatsDiv.contains(shipDiv)) {
                     shipStatsDiv.removeChild(shipDiv);
                     
+                    
                 }
             }
         });
 
         shipDiv.querySelector('.edit-btn').addEventListener('click', function() {
+            bleep17.play();
             document.getElementById('ship-type').value = ship.type;
             document.getElementById('ship-name').value = ship.name;
             document.getElementById('ship-manufacturer').value = ship.manufacturer;
@@ -262,7 +265,7 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
 
         const primaryArmament = document.getElementById('primary-armament').value;
         const newShip = new Ship(type, name, selectedOptions, primaryArmament, secondaryArmament1, secondaryArmament2, description, manufacturer,);
-
+        bleep17.play();
         newShip.id = saveShipToFirebase(newShip);
     }
 

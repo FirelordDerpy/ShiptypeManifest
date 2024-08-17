@@ -11,6 +11,7 @@ function addClient() {
     const clientCreditsInput = document.getElementById('client-credits');
     const clientCredits = clientCreditsInput.value;
     if (clientName && clientCredits) {
+        bleep17.play();
         // Add the client name and credits to the list on the HTML page
         const listItem = document.createElement('li');
         listItem.textContent = `${clientName} - ₹${clientCredits}`;
@@ -60,6 +61,7 @@ function displayClients() {
            const adjustButton = document.createElement('button');
             adjustButton.textContent = 'Adjust Credits';
             adjustButton.addEventListener('click', function() {
+                bleep17.play();
                 let newCredits = prompt('Enter the new amount of credits:');
                 // Check if the input is a positive integer
                 if (newCredits && Number.isInteger(+newCredits) && +newCredits >= 0) {
@@ -76,6 +78,7 @@ function displayClients() {
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
             deleteButton.addEventListener('click', function() {
+                bleep17.play();
                 // Remove the client name from Firebase
                 const clientRef = ref(db, `factions/clients/${key}`);
                 remove(clientRef);
