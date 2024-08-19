@@ -167,6 +167,14 @@ progress[value]::-moz-progress-bar {
         padding: 0px 0px;
         margin: 10px 10px;
 }
+
+.status-box {
+    border: 2px solid black;
+    padding: 10px;
+    margin: 10px;
+    color: red;
+}
+
 /* ShipyardsPage */
 
 
