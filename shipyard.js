@@ -198,6 +198,7 @@ async function buildQue(shipName, quantity) {
     const selectedShip = ships.find(ship => ship.name === shipName);
     if (selectedShip) {
         // Calculate the build time and cost
+
         const buildTime = selectedShip.calculateTotalPowerLevel() * buildTimeModifier;
         const totalCost = selectedShip.calculateTotalCost() * quantity;
         
@@ -210,7 +211,9 @@ async function buildQue(shipName, quantity) {
         if (clientCredits >= totalCost) {
             clientCredits -= totalCost;
             set(clientRef, { ...client, credits: clientCredits });
-
+            
+            const startTime = new Date();
+            const startTimeString = startTime.toLocaleString();
             const endTime = new Date(Date.now() + buildTime * 1000);
             const endTimeString = endTime.toLocaleString();
 
@@ -219,6 +222,7 @@ async function buildQue(shipName, quantity) {
                 shipName: shipName,
                 quantity: quantity,
                 totalCost: totalCost,
+                startTime: startTimeString,
                 endTime: endTimeString,
                 client: client.name
             };
@@ -250,9 +254,12 @@ async function buildQue(shipName, quantity) {
 }
 
 
-
+let loadBuildQueueInterval;
 
 function loadBuildQueue() {
+    if (loadBuildQueueInterval) {
+        clearInterval(loadBuildQueueInterval);
+    }
     // Load the build queue from Firebase
     const buildQueueRef = ref(db, 'genShipYard/buildQueue');
     onValue(buildQueueRef, (snapshot) => {
@@ -263,6 +270,9 @@ function loadBuildQueue() {
            buildQueueContainer.innerHTML = '';
 
             for (const [key, buildInfo] of Object.entries(buildQueue)) {
+                let timeLeft = 0;
+
+                
                 // Create a div for the build information
                 const buildInfoDiv = document.createElement('div');
                 buildInfoDiv.className = 'build-info';
@@ -300,8 +310,16 @@ function loadBuildQueue() {
                         statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} seconds left). Ready for delivery at: ${buildInfo.endTime}`;
                     }
                 }, 100);
+
+
                 
-                
+
+                        // Progress Bar
+                        const progressBar = document.createElement('progress');
+                        progressBar.className = 'progress-bar';
+                        progressBar.max = endTime.getTime() - new Date(buildInfo.startTime).getTime();
+                        progressBar.value = now.getTime() - new Date(buildInfo.startTime).getTime();
+                        buildInfoDiv.appendChild(progressBar);
                         
                         // Create a cancel button
                         const cancelButton = document.createElement('button');
@@ -337,7 +355,7 @@ function loadBuildQueue() {
 
             }
         });
-    
+        loadBuildQueueInterval = setInterval(loadBuildQueue, 1000);
 };
 
 
@@ -352,10 +370,6 @@ window.onload = function() {
 };
 
 
-
-
-
-
 // Function to update the time 
 
 function updateTime() {
@@ -367,16 +381,5 @@ function updateTime() {
 }
 
 
-
-//EMERGANCY FIREBASE DELETE BUTTON
-    if (window.location.pathname.toLowerCase().includes('index')) {
-
-const deleteButton = document.getElementById('delete-button');
-
-deleteButton.addEventListener('click', function() {
-    const buildQueueRef = ref(db, 'genShipYard');
-    set(buildQueueRef, null);
-    
-})};
 
 
