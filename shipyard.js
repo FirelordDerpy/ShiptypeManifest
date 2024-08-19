@@ -290,7 +290,7 @@ function loadBuildQueue() {
                     <h2> Status: Under Construction </h2> 
                     <h2>${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client}</h2>
                     <p>Construction Cost ₹${buildInfo.totalCost.toLocaleString()} Credits</p>
-                    <p>Completion Time: ${buildInfo.endTime} (${timeLeft.toFixed(0)} units left)</p>
+                    <p>Completion Time: ${buildInfo.endTime} ${timeLeft.toFixed(0)} units left</p>
                     `;
                 } else {
                     // COMPLETE PLACEHOLDER (2-3)
