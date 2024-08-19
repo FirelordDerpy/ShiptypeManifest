@@ -1,7 +1,7 @@
 import { app, db, push,} from '/firebaseConfig.js';
 import { ships } from '/index.js';
 import { getDatabase, set, ref, onValue, get } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-
+let audioPlayed = false;
 
 
 // TO REPLACE 
@@ -12,6 +12,7 @@ let buildTimeModifier = 1.5;
 
 let isEventListenerAdded = false;
 
+let timer;
 
 //SHIP DROP DOWN
 
@@ -239,11 +240,11 @@ async function buildQue(shipName, quantity) {
             }
 
             // Create a countdown timer
-            const timer = setInterval(function() {
-                const now = new Date();
-                const timeLeft = (endTime - now) / 1000;
-            }, 1000);  // Update every 100 milliseconds
-            bldaudio.play();
+                timer = setInterval(function() {
+                    const now = new Date();
+                    const timeLeft = (endTime - now) / 1000;
+                }, 1000);  // Update every 100 milliseconds
+                bldaudio.play();
 
         } else {
             console.log("Not enough credits!");
@@ -267,12 +268,9 @@ function loadBuildQueue() {
         if (buildQueue) {
             const buildQueueContainer = document.getElementById('build-queue-container');
 
-           buildQueueContainer.innerHTML = '';
+            buildQueueContainer.innerHTML = '';
 
             for (const [key, buildInfo] of Object.entries(buildQueue)) {
-                let timeLeft = 0;
-
-                
                 // Create a div for the build information
                 const buildInfoDiv = document.createElement('div');
                 buildInfoDiv.className = 'build-info';
@@ -284,36 +282,19 @@ function loadBuildQueue() {
                 // Check if the build process is already completed
                 const now = new Date();
                 const endTime = new Date(buildInfo.endTime);
-                    if (now < endTime) {
+                let timeLeft = Math.round((endTime - now) / 100) / 10;
+                if (now < endTime) {
                     // UNDER CONSTRUCTION (1-4)
-                    statusDiv.textContent = `4Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} seconds left). Ready for delivery at: ${buildInfo.endTime}`;
-                    } else {
+                    statusDiv.textContent = `1Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} seconds left). Ready for delivery at: ${buildInfo.endTime}`;
+                } else {
                     // COMPLETE PLACEHOLDER (2-3)
-                    statusDiv.textContent = `2Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
-                    }
-                    
-                    let audioPlayed = false;
-                    const timer = setInterval(function() {
-                    const now = new Date();
-                    const timeLeft = Math.round((endTime - now) / 100) / 10;
-                    if (timeLeft <= 0) {
-                        clearInterval(timer);
-                        // COMPLETED (2-3)
-                        statusDiv.textContent = `3Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
-                    } else if (timeLeft <= .12 && timeLeft > 0.01) {
-                        // PLAY AUDIO
-                        //const completeAudio = new Audio('/assets/complete.wav');
-                        completeAudio.play();
-                        audioPlayed = true;
-                    } else {
-                        // UNDER CONSTRUCTION (1-4)
-                        statusDiv.textContent = `4Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} seconds left). Ready for delivery at: ${buildInfo.endTime}`;
-                    }
-                }, 100);
+                    statusDiv.textContent = `2Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`; 
+                        if (now >= endTime && !audioPlayed) {
+                            completeAudio.play();
+                            audioPlayed = true;
+                        }
 
-
-                
-
+                    }         
                         // Progress Bar
                         const progressBar = document.createElement('progress');
                         progressBar.className = 'progress-bar';
@@ -322,15 +303,15 @@ function loadBuildQueue() {
                         buildInfoDiv.appendChild(progressBar);
                         
                         // Create a cancel button
-                        const cancelButton = document.createElement('button');
-                        cancelButton.textContent = 'Cancel';
-                        cancelButton.className = 'shipBtn';
-                        cancelButton.addEventListener('click', function() {
-                            cancelAudio.play();
-                            const buildInfoRef = ref(db, `genShipYard/buildQueue/${key}`);
-                            set(buildInfoRef, null);
-                            buildInfoDiv.remove();
-                            clearInterval(timer);
+                            const cancelButton = document.createElement('button');
+                            cancelButton.textContent = 'Cancel';
+                            cancelButton.className = 'shipBtn';
+                            cancelButton.addEventListener('click', function() {
+                                cancelAudio.play();
+                                const buildInfoRef = ref(db, `genShipYard/buildQueue/${key}`);
+                                set(buildInfoRef, null);
+                                buildInfoDiv.remove();
+                                clearInterval(timer);
                         });
                         buildInfoDiv.appendChild(cancelButton);
 
@@ -350,12 +331,13 @@ function loadBuildQueue() {
 
                     // Update the time
                     updateTime();
-                    setInterval(updateTime, 1000);
+                    setInterval(updateTime, 100);
                     }
 
             }
         });
         loadBuildQueueInterval = setInterval(loadBuildQueue, 1000);
+        
 };
 
 
