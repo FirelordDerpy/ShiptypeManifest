@@ -285,29 +285,29 @@ function loadBuildQueue() {
                 const now = new Date();
                 const endTime = new Date(buildInfo.endTime);
                     if (now < endTime) {
-                    // UNDER CONSTRUCTION
-                    statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction. Ready for delivery at: ${buildInfo.endTime}`;
+                    // UNDER CONSTRUCTION (1-4)
+                    statusDiv.textContent = `4Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} seconds left). Ready for delivery at: ${buildInfo.endTime}`;
                     } else {
-                    // COMPLETE PLACEHOLDER
-                    statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
+                    // COMPLETE PLACEHOLDER (2-3)
+                    statusDiv.textContent = `2Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
                     }
                     
                     let audioPlayed = false;
                     const timer = setInterval(function() {
                     const now = new Date();
-                    const timeLeft = Math.round((endTime - now) / 100) / 10;  // Get the time left in tenths of a second
+                    const timeLeft = Math.round((endTime - now) / 100) / 10;
                     if (timeLeft <= 0) {
                         clearInterval(timer);
-                        // COMPLETED
-                        statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
+                        // COMPLETED (2-3)
+                        statusDiv.textContent = `3Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`;
                     } else if (timeLeft <= .12 && timeLeft > 0.01) {
                         // PLAY AUDIO
                         //const completeAudio = new Audio('/assets/complete.wav');
                         completeAudio.play();
                         audioPlayed = true;
                     } else {
-                        // UNDER CONSTRUCTION
-                        statusDiv.textContent = `Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} seconds left). Ready for delivery at: ${buildInfo.endTime}`;
+                        // UNDER CONSTRUCTION (1-4)
+                        statusDiv.textContent = `4Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} seconds left). Ready for delivery at: ${buildInfo.endTime}`;
                     }
                 }, 100);
 
