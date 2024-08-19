@@ -277,18 +277,29 @@ function loadBuildQueue() {
 
                 // Create a div for the build status text
                 const statusDiv = document.createElement('div');
+                statusDiv.className = 'status-box';
                 buildInfoDiv.appendChild(statusDiv);
 
                 // Check if the build process is already completed
                 const now = new Date();
                 const endTime = new Date(buildInfo.endTime);
-                let timeLeft = Math.round((endTime - now) / 100) / 10;
+                let timeLeft = Math.round((endTime - now) / 1000) / 1;
                 if (now < endTime) {
                     // UNDER CONSTRUCTION (1-4)
-                    statusDiv.textContent = `1Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} will cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Under Construction (${timeLeft.toFixed(1)} seconds left). Ready for delivery at: ${buildInfo.endTime}`;
+                    statusDiv.innerHTML = `
+                    <h2> Status: Under Construction </h2> 
+                    <h2>${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client}</h2>
+                    <p>Construction Cost ₹${buildInfo.totalCost.toLocaleString()} Credits</p>
+                    <p>Completion Time: ${buildInfo.endTime} (${timeLeft.toFixed(0)} units left)</p>
+                    `;
                 } else {
                     // COMPLETE PLACEHOLDER (2-3)
-                    statusDiv.textContent = `2Building ${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client} cost ₹ ${buildInfo.totalCost.toLocaleString()}. Status: Ready for Delivery. Ready for delivery at: ${buildInfo.endTime}`; 
+                    statusDiv.innerHTML = `
+                    <h2>Ready for Delivery.</h2>
+                    <h2>${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client}</h2> 
+                    <p> Construction Cost ₹${buildInfo.totalCost.toLocaleString()} Credits</p> 
+                    <p>Completion Time: ${buildInfo.endTime}</p>
+                    `; 
                         if (now >= endTime && !audioPlayed) {
                             completeAudio.play();
                             audioPlayed = true;
