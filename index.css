@@ -103,7 +103,9 @@ progress[value]::-webkit-progress-value {
 }
 
 progress[value]::-moz-progress-bar {
-    background-color: red;
+    background-color: darkgreen;
+    border: dashed red;
+
 
 }
 
