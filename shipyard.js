@@ -1,6 +1,6 @@
-import { app, db, push,} from '/firebaseConfig.js';
+import { app, db, push, getDatabase, set, ref, onValue, get} from '/firebaseConfig.js';
 import { ships } from '/index.js';
-import { getDatabase, set, ref, onValue, get } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+//import { } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 let audioPlayed = false;
 
 

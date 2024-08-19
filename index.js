@@ -1,9 +1,9 @@
 
-import { app, db, push  } from '/firebaseConfig.js';  // Import the initialized app and database
+import { app, db, push, getDatabase, ref, set, onValue, remove  } from '/firebaseConfig.js';  // Import the initialized app and database
 import { manufacturers } from '/manufacturers.js';
 import { addons, primaryArm, secondaryArm } from '/addons.js';
 import { ShipType, shipTypes } from '/shipTypes.js';
-import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+//import { } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
 
 

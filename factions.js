@@ -1,5 +1,5 @@
-import { app, db, push, onValue, remove } from '/firebaseConfig.js';
-import { set, ref } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { app, db, push, onValue, remove, set, ref } from '/firebaseConfig.js';
+//import {} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
 let clientInput, addClientButton, clientList;
 
