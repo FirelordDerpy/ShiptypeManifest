@@ -331,7 +331,7 @@ function loadBuildQueue() {
 
                     // Update the time
                     updateTime();
-                    setInterval(updateTime, 100);
+                    setInterval(updateTime, 500);
                     }
 
             }
