@@ -363,7 +363,7 @@ function displayShipStatsLite() {
             <p>Secondary Armament 1: ${ship.secondaryArmament1}. Secondary Armament 2: ${ship.secondaryArmament2}</p>
             <p>Addons: ${ship.addons.map(addon => addon.name).join(', ')}</p>
             <p>Final Cost: ₹ ${ship.calculateTotalCost().toLocaleString()}</p>
-            <p>Description:.. ${ship.description}</p>
+            <p>Description: ${ship.description}</p>
         `;
 
         shipStatsDiv.insertBefore(shipDiv, shipStatsDiv.firstChild);
