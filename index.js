@@ -357,7 +357,7 @@ function displayShipStatsLite() {
 
         shipDiv.innerHTML = `
             <h2>${ship.name}</h2>
-            <p>Type: ${ship.type}. Manufacturer: ${ship.manufacturer}. Final Cost: ₹ ${ship.calculateTotalCost().toLocaleString()}</p>
+            <p>Type: ${ship.type}. Manufacturer YAY: ${ship.manufacturer}. Final Cost: ₹ ${ship.calculateTotalCost().toLocaleString()}</p>
             <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.calculateTotalPowerLevel()}. Hull Points: ${ship.hullPoints + ship.calculateHullPointsBoost()}. Shield and Armor Points: ${ship.shieldArmorPoints + ship.calculateShieldArmorPointsBoost()}</p>
             <p>Primary Armament: ${ship.primaryArmament}</p>
             <p>Secondary Armament 1: ${ship.secondaryArmament1}. Secondary Armament 2: ${ship.secondaryArmament2}</p>
