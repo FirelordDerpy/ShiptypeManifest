@@ -262,3 +262,37 @@ a:active {
     padding: 10px;
     margin-top: 10px;
 }
+
+
+.DetBtnFP{
+    margin: 0px 10px 0px 10px;
+    padding: 5px 10px;
+    font-size: 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+}
+
+.ChgQtyBtnFP{
+    margin: 0px 10px 0px 10px;
+    padding: 5px 10px;
+    font-size: 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(16, 135, 151);
+    color: white;
+    cursor: pointer;
+}
+.clientdivF{
+    color: white;
+    background-color: rgba(0, 0, 139, 0);
+    outline: dashed rgba(17, 192, 32, 0.205);
+}
+
+.shipdivF{
+    color: yellow;
+    background-color: rgba(0, 0, 139, 0);
+    outline: dashed rgba(145, 192, 17, 0.247);
+}

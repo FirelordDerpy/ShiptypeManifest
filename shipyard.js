@@ -1,5 +1,5 @@
 import { app, db, push, getDatabase, set, ref, onValue, get} from '/firebaseConfig.js';
-import { ships } from '/index.js';
+import { ships } from '/shipIndex.js';
 //import { } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 let audioPlayed = false;
 // TO REPLACE 
@@ -300,44 +300,64 @@ function loadBuildQueue() {
                     <p>Completion Time: ${buildInfo.endTime}</p>
                     `; 
 
-                        // Create a "Deliver" button
-                        const deliverButton = document.createElement('button');
-                        deliverButton.textContent = 'Deliver';
-                        deliverButton.className = 'shipBtn';
-                        deliverButton.addEventListener('click', function() {
-                            deliverAudio.play();
-                        
-                            // Fetch the client's name from Firebase
-                            const clientRef = ref(db, `factions/clients/${buildInfo.clientKey}`);
-                            get(clientRef).then((snapshot) => {
-                                const client = snapshot.val();
-                                const clientName = client.name;
-                        
-                                // Check if the client's name matches the client listed in the statusDiv
-                                if (clientName === buildInfo.client) {
-                                    // Remove the build information from the build queue
-                                    const buildInfoRef = ref(db, `genShipYard/buildQueue/${key}`);
-                                    set(buildInfoRef, null);
-                        
-                                    // Save the build information under the client's name
-                                    const clientBuildsRef = ref(db, `factions/clients/${buildInfo.clientKey}/builds/ownedships`);
-                                    const newClientBuildInfoRef = push(clientBuildsRef);
-                                    set(newClientBuildInfoRef, {
-                                        shipId: buildInfo.shipId,
-                                        shipName: buildInfo.shipName,
-                                        quantity: buildInfo.quantity
-                                        
-                                    });
+// Create a "Deliver" button
+const deliverButton = document.createElement('button');
+deliverButton.textContent = 'Deliver';
+deliverButton.className = 'shipBtn';
+deliverButton.addEventListener('click', async function() {
+    deliverAudio.play();
 
-                            // Remove the build information div
-                            buildInfoDiv.remove();
-                        } else {
-                            console.log("The client listed in the statusDiv does not match the client you are delivering to.");
-                        }
-                        });
-                    });
+    // Fetch the client's name from Firebase
+    const clientRef = ref(db, `factions/clients/${buildInfo.clientKey}`);
+    get(clientRef).then(async (snapshot) => {
+        const client = snapshot.val();
+        const clientName = client.name;
 
-                        buildInfoDiv.appendChild(deliverButton);
+        // Check if the client's name matches the client listed in the statusDiv
+        if (clientName === buildInfo.client) {
+            // Remove the build information from the build queue
+            const buildInfoRef = ref(db, `genShipYard/buildQueue/${key}`);
+            set(buildInfoRef, null);
+
+            // Fetch the client's ships from Firebase
+            const clientShipsRef = ref(db, `factions/clients/${buildInfo.clientKey}/builds/ownedships`);
+            const clientShipsSnapshot = await get(clientShipsRef);
+            const clientShips = clientShipsSnapshot.val();
+
+            // Check if the client already has ships with the same shipId
+            let shipExists = false;
+            for (const shipKey in clientShips) {
+                const ship = clientShips[shipKey];
+                if (ship.shipId === buildInfo.shipId) {
+                    // If the ship exists, add the quantity to the existing number
+                    ship.quantity = Number(ship.quantity) + Number(buildInfo.quantity);  // Convert quantities to numbers before adding
+                    const clientShipRef = ref(db, `factions/clients/${buildInfo.clientKey}/builds/ownedships/${shipKey}`);
+                    set(clientShipRef, ship);
+                    shipExists = true;
+                    break;
+                }
+            }
+
+
+            // If the ship does not exist, save the build information under the client's name
+            if (!shipExists) {
+                const newClientBuildInfoRef = push(clientShipsRef);
+                set(newClientBuildInfoRef, {
+                    shipId: buildInfo.shipId,
+                    shipName: buildInfo.shipName,
+                    quantity: buildInfo.quantity
+                });
+            }
+
+            // Remove the build information div
+            buildInfoDiv.remove();
+        } else {
+            console.log("The client listed in the statusDiv does not match the client you are delivering to.");
+        }
+    });
+});
+buildInfoDiv.appendChild(deliverButton);
+
 
                         if (now >= endTime && !audioPlayed) {
                             completeAudio.play();

@@ -70,7 +70,7 @@ adjustButton.addEventListener('click', function() {
     const creditInput = document.createElement('input');
     creditInput.type = 'number';
     creditInput.min = '0';
-    creditInput.value = clientCredits;  // Set the initial value to the current credits
+    creditInput.value = clientCredits;
     creditInput.id = 'credit-input';
 
     // Replace the client data div with the input field
