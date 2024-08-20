@@ -17,5 +17,6 @@ export const primaryArm = {
 export const secondaryArm = {
     'No secondary': { cost: 1, powerLevelBoost: 1, lightAttack: 0, mediumAttack: 0, heavyAttack: 0 },
     'Secondary Laser Cannons': { cost: 100, powerLevelBoost: 1, lightAttack: 5, mediumAttack: 5, heavyAttack: 5 },
+    'Level 1 Secondary Turrets': { cost: 100, powerLevelBoost: 1.5, lightAttack: 6, mediumAttack: 6, heavyAttack: 2 },
     // Add more weapons as needed
 };
