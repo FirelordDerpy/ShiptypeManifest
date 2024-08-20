@@ -254,3 +254,11 @@ a:active {
     border: dashed red;
     background-color: rebeccapurple;
 }
+
+/* FLEETS PAGE */
+
+.details-div {
+    border: 1px solid black;
+    padding: 10px;
+    margin-top: 10px;
+}

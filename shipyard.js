@@ -2,16 +2,11 @@ import { app, db, push, getDatabase, set, ref, onValue, get} from '/firebaseConf
 import { ships } from '/index.js';
 //import { } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 let audioPlayed = false;
-
-
 // TO REPLACE 
 let buildTimeModifier = 1.5;
-
 // TO REPLACE 
 
-
 let isEventListenerAdded = false;
-
 let timer;
 let selectedClientKey;
 
@@ -168,6 +163,7 @@ function displaySelectedShipStats(shipName, quantity) {
         const shipStats = document.createElement('div');
         shipStats.id = 'ship-details';
         shipStats.innerHTML = `
+            <p> id: ${selectedShip.id} </p>
             <h2>${selectedShip.name}</h2>
             <p>Type: ${selectedShip.type}. Manufacturer: ${selectedShip.manufacturer}</p>
             <p>Silhouette: ${selectedShip.silhouette}. Power Level: ${selectedShip.calculateTotalPowerLevel()}. Hull Points: ${selectedShip.hullPoints + selectedShip.calculateHullPointsBoost()}. Shield and Armor Points: ${selectedShip.shieldArmorPoints + selectedShip.calculateShieldArmorPointsBoost()}</p>
@@ -219,6 +215,7 @@ async function buildQue(shipName, quantity) {
 
             // Create the build information
             const buildInfo = {
+                shipId: selectedShip.id,
                 shipName: shipName,
                 quantity: quantity,
                 totalCost: totalCost,
@@ -287,6 +284,7 @@ function loadBuildQueue() {
                 if (now < endTime) {
                     // UNDER CONSTRUCTION
                     statusDiv.innerHTML = `
+                    <p> ship id ${buildInfo.shipId}
                     <h2> Status: Under Construction </h2> 
                     <h2>${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client}</h2>
                     <p>Construction Cost ₹${buildInfo.totalCost.toLocaleString()} Credits</p>
@@ -295,6 +293,7 @@ function loadBuildQueue() {
                 } else {
                     // COMPLETE
                     statusDiv.innerHTML = `
+                    <p> ship id ${buildInfo.shipId}
                     <h2>Ready for Delivery.</h2>
                     <h2>${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client}</h2> 
                     <p> Construction Cost ₹${buildInfo.totalCost.toLocaleString()} Credits</p> 
@@ -324,6 +323,7 @@ function loadBuildQueue() {
                                     const clientBuildsRef = ref(db, `factions/clients/${buildInfo.clientKey}/builds/ownedships`);
                                     const newClientBuildInfoRef = push(clientBuildsRef);
                                     set(newClientBuildInfoRef, {
+                                        shipId: buildInfo.shipId,
                                         shipName: buildInfo.shipName,
                                         quantity: buildInfo.quantity
                                         

@@ -160,6 +160,7 @@ function displayShipStats() {
         const shipDiv = document.createElement('div');
         shipDiv.className = 'ship-stats-block';
         shipDiv.innerHTML = `
+            <p>id ${ship.id}</p>
             <h2>${ship.name}</h2>
             <p>Type: ${ship.type}. Manufacturer: ${ship.manufacturer}. Base Cost: ₹ ${ship.baseCost}</p>
             <p>Silhouette: ${ship.silhouette}. Power Level: ${ship.calculateTotalPowerLevel()}</p>
