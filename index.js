@@ -1,5 +1,5 @@
 
-import { app, db, push, getDatabase, ref, set, onValue, remove  } from '/firebaseConfig.js';  // Import the initialized app and database
+import { app, db, push, getDatabase, ref, set, onValue, remove, get  } from '/firebaseConfig.js';  // Import the initialized app and database
 import { manufacturers } from '/manufacturers.js';
 import { addons, primaryArm, secondaryArm } from '/addons.js';
 import { ShipType, shipTypes } from '/shipTypes.js';
@@ -8,8 +8,23 @@ import { ShipType, shipTypes } from '/shipTypes.js';
 
 
 
-function saveShipToFirebase(ship) {
+async function saveShipToFirebase(ship) {
     const shipsRef = ref(db, 'ships');
+    
+    // Fetch all ships from Firebase
+    const snapshot = await get(shipsRef);
+    const ships = snapshot.val();
+
+    // Check if a ship with the same name already exists
+    for (const key in ships) {
+        if (ships[key].name === ship.name) {
+            console.error('A ship with this name already exists.');
+            alert('A ship with this name already exists.');
+            return;
+        }
+    }
+
+    // If no ship with the same name exists, save the new ship
     const newShipRef = push(shipsRef);
     set(newShipRef, ship)
         .then(() => {
@@ -20,6 +35,7 @@ function saveShipToFirebase(ship) {
             console.error('Error saving ship: ', error);
         });
 }
+
 
 
 class Ship {
@@ -142,7 +158,7 @@ function displayShipStats() {
     
     for (const ship of ships) {
         const shipDiv = document.createElement('div');
-        shipDiv.className = 'ship-stats-block'; // Add this line
+        shipDiv.className = 'ship-stats-block';
         shipDiv.innerHTML = `
             <h2>${ship.name}</h2>
             <p>Type: ${ship.type}. Manufacturer: ${ship.manufacturer}. Base Cost: ₹ ${ship.baseCost}</p>
