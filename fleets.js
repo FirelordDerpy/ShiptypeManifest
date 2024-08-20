@@ -1,5 +1,5 @@
 import { app, db, push, getDatabase, set, ref, onValue, get} from '/firebaseConfig.js';
-import { ships } from '/index.js';
+import { ships } from '/shipIndex.js';
 
 
 // class factionFleet {
@@ -16,6 +16,9 @@ const clientsRef = ref(db, 'factions/clients');
 onValue(clientsRef, async (snapshot) => {
     const clients = snapshot.val();
     const clientsContainer = document.getElementById('clients-container');
+
+    // Clear the contents of the clientsContainer
+    clientsContainer.innerHTML = '';
     for (const clientKey in clients) {
         const client = clients[clientKey];
 
@@ -26,6 +29,7 @@ onValue(clientsRef, async (snapshot) => {
 
         // Create a list for the client's ships
         const shipsList = document.createElement('ul');
+        clientDiv.className = 'clientdivF';
         clientDiv.appendChild(shipsList);
 
 // Fetch the ships that the client owns from Firebase
@@ -37,13 +41,16 @@ for (const shipKey in clientShips) {
 
     // Create a list item for each ship and append it to the list
     const shipListItem = document.createElement('li');
+    shipListItem.className = 'shipdivF'
     shipListItem.innerHTML = `${ship.shipId} ${ship.quantity}x - ${ship.shipName}`;
     shipsList.appendChild(shipListItem);
 
 // Create a "Details" button for each ship
 const detailsButton = document.createElement('button');
 detailsButton.textContent = 'Details';
+detailsButton.className = 'DetBtnFP';
 detailsButton.addEventListener('click', async function() {
+    window.bleep6.play();
     // Check if the details div already exists
     let detailsDiv = shipListItem.querySelector('.details-div');
     if (detailsDiv) {
@@ -83,14 +90,44 @@ detailsButton.addEventListener('click', async function() {
 });
 shipListItem.appendChild(detailsButton);
 
+// Create a "Delete" button for each ship
+const deleteButton = document.createElement('button');
+deleteButton.textContent = 'Delete';
+deleteButton.className = 'DelBtnFP';  // Assign your CSS class
+deleteButton.addEventListener('click', function() {
+    // Delete the ship from Firebase
+    const shipRef = ref(db, `factions/clients/${clientKey}/builds/ownedships/${shipKey}`);
+    set(shipRef, null);
 
+    // Remove the list item from the list
+    shipListItem.remove();
+});
+shipListItem.appendChild(deleteButton);
 
+// Create a "Change Quantity" button for each ship
+const changeQuantityButton = document.createElement('button');
+changeQuantityButton.textContent = 'Change Quantity';
+changeQuantityButton.className = 'ChgQtyBtnFP';  // Assign your CSS class
+changeQuantityButton.addEventListener('click', function() {
+    // Prompt the user to enter a new quantity
+    const newQuantity = prompt('Enter a new quantity:');
+    if (newQuantity !== null) {
+        // Update the quantity in Firebase
+        const shipRef = ref(db, `factions/clients/${clientKey}/builds/ownedships/${shipKey}`);
+        set(shipRef, { ...ship, quantity: newQuantity });
 
-}
-
+        // Update the quantity in the list item
+        shipListItem.innerHTML = `${ship.shipId} ${newQuantity}x - ${ship.shipName}`;
+        shipListItem.appendChild(detailsButton);
+        shipListItem.appendChild(deleteButton);
+        shipListItem.appendChild(changeQuantityButton);
     }
 });
+shipListItem.appendChild(changeQuantityButton);
+
 
 }
-
+}
+});
+}
 
