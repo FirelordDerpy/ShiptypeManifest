@@ -13,6 +13,7 @@ let buildTimeModifier = 1.5;
 let isEventListenerAdded = false;
 
 let timer;
+let selectedClientKey;
 
 //SHIP DROP DOWN
 
@@ -117,7 +118,7 @@ async function createClientDropdown() {
     for (const key in clients) {
         const clientName = clients[key].name;
         const option = document.createElement('option');
-        option.value = key;  // Store the client's key as the option value
+        option.value = key;
         option.text = clientName;
         newClientDropdown.appendChild(option);
     }
@@ -131,13 +132,13 @@ async function createClientDropdown() {
 
 
 function displayClientCredits(clientKey) {
-    // Fetch the client's credits from Firebase
+    // Fetch the client's credits  Firebase
     const clientRef = ref(db, `factions/clients/${clientKey}`);
     onValue(clientRef, (snapshot) => {
         const client = snapshot.val();
         const clientCredits = client.credits;
 
-        // Display the client's credits
+        // Display credits
         const clientCreditsDiv = document.getElementById('client-credits');
         clientCreditsDiv.textContent = `Client's credits: ₹ ${clientCredits.toLocaleString()}`;
     });
@@ -176,8 +177,6 @@ function displaySelectedShipStats(shipName, quantity) {
             <p>Addons: ${selectedShip.addons.map(addon => addon.name).join(', ')}</p>
             <p>Final Cost for ${quantity} ship(s): ₹ ${(selectedShip.calculateTotalCost() * quantity).toLocaleString()}. Build Time: ${buildTime} units</p>
             <p>Description: ${selectedShip.description}</p>
-
-
         `;
         const shipDetailsContainer = document.getElementById('ship-details-container');
         shipDetailsContainer.appendChild(shipStats);
@@ -195,7 +194,7 @@ const buildInfoDiv = document.createElement('div');
 
 async function buildQue(shipName, quantity) {
     const clientDropdown = document.getElementById('client-dropdown');
-    const selectedClientKey = clientDropdown.value;
+    selectedClientKey = clientDropdown.value;
     const selectedShip = ships.find(ship => ship.name === shipName);
     if (selectedShip) {
         // Calculate the build time and cost
@@ -208,7 +207,7 @@ async function buildQue(shipName, quantity) {
         const client = snapshot.val();
         let clientCredits = client.credits;
 
-        // Check if the client has enough credits
+        // Check if the client has  credits
         if (clientCredits >= totalCost) {
             clientCredits -= totalCost;
             set(clientRef, { ...client, credits: clientCredits });
@@ -225,10 +224,11 @@ async function buildQue(shipName, quantity) {
                 totalCost: totalCost,
                 startTime: startTimeString,
                 endTime: endTimeString,
-                client: client.name
+                client: client.name,
+                clientKey: selectedClientKey
             };
 
-            // Save the build information to Firebase under the "genShipYard" folder
+            // Save the build information to Firebase
             const buildQueueRef = ref(db, 'genShipYard/buildQueue');
             const newBuildInfoRef = push(buildQueueRef);
             set(newBuildInfoRef, buildInfo);
@@ -285,7 +285,7 @@ function loadBuildQueue() {
                 const endTime = new Date(buildInfo.endTime);
                 let timeLeft = Math.round((endTime - now) / 1000) / 1;
                 if (now < endTime) {
-                    // UNDER CONSTRUCTION (1-4)
+                    // UNDER CONSTRUCTION
                     statusDiv.innerHTML = `
                     <h2> Status: Under Construction </h2> 
                     <h2>${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client}</h2>
@@ -293,13 +293,52 @@ function loadBuildQueue() {
                     <p>Completion Time: ${buildInfo.endTime} ${timeLeft.toFixed(0)} Units left</p>
                     `;
                 } else {
-                    // COMPLETE PLACEHOLDER (2-3)
+                    // COMPLETE
                     statusDiv.innerHTML = `
                     <h2>Ready for Delivery.</h2>
                     <h2>${buildInfo.quantity} ${buildInfo.shipName}(s) for ${buildInfo.client}</h2> 
                     <p> Construction Cost ₹${buildInfo.totalCost.toLocaleString()} Credits</p> 
                     <p>Completion Time: ${buildInfo.endTime}</p>
                     `; 
+
+                        // Create a "Deliver" button
+                        const deliverButton = document.createElement('button');
+                        deliverButton.textContent = 'Deliver';
+                        deliverButton.className = 'shipBtn';
+                        deliverButton.addEventListener('click', function() {
+                            deliverAudio.play();
+                        
+                            // Fetch the client's name from Firebase
+                            const clientRef = ref(db, `factions/clients/${buildInfo.clientKey}`);
+                            get(clientRef).then((snapshot) => {
+                                const client = snapshot.val();
+                                const clientName = client.name;
+                        
+                                // Check if the client's name matches the client listed in the statusDiv
+                                if (clientName === buildInfo.client) {
+                                    // Remove the build information from the build queue
+                                    const buildInfoRef = ref(db, `genShipYard/buildQueue/${key}`);
+                                    set(buildInfoRef, null);
+                        
+                                    // Save the build information under the client's name
+                                    const clientBuildsRef = ref(db, `factions/clients/${buildInfo.clientKey}/builds/ownedships`);
+                                    const newClientBuildInfoRef = push(clientBuildsRef);
+                                    set(newClientBuildInfoRef, {
+                                        shipName: buildInfo.shipName,
+                                        quantity: buildInfo.quantity
+                                        
+                                    });
+
+                            // Remove the build information div
+                            buildInfoDiv.remove();
+                        } else {
+                            console.log("The client listed in the statusDiv does not match the client you are delivering to.");
+                        }
+                        });
+                    });
+
+                        buildInfoDiv.appendChild(deliverButton);
+
                         if (now >= endTime && !audioPlayed) {
                             completeAudio.play();
                             audioPlayed = true;
@@ -326,14 +365,7 @@ function loadBuildQueue() {
                         });
                         buildInfoDiv.appendChild(cancelButton);
 
-                        // Create a "Deliver" button
-                        const deliverButton = document.createElement('button');
-                        deliverButton.textContent = 'Deliver';
-                        deliverButton.className = 'shipBtn';
-                        deliverButton.addEventListener('click', function() {
-                            deliverAudio.play();
-                        });
-                        buildInfoDiv.appendChild(deliverButton);
+                        
                         buildQueueContainer.appendChild(buildInfoDiv);
                         
                     const dateTimeDiv = document.createElement('div');
@@ -350,6 +382,8 @@ function loadBuildQueue() {
         loadBuildQueueInterval = setInterval(loadBuildQueue, 1000);
         
 };
+
+
 
 
 
