@@ -118,8 +118,8 @@ if (window.location.pathname.toLowerCase().includes('index')) {
 
 
 
-
-if (window.location.pathname.toLowerCase().includes('index')) {
+if (window.location.pathname.toLowerCase() === '/index' || window.location.pathname === '/'){
+// if (window.location.pathname.toLowerCase().includes('index')) {
     displayClients();
 
 
