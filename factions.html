@@ -7,7 +7,7 @@
 </head>
 
 <header>
-    <h1>Index</h1>
+    <h1>Factions and Clients</h1>
 
     <a href="fleets.html">Fleets</a>
     <a href="shiplist.html">View Ship List</a>
@@ -23,11 +23,18 @@
 
     <input type="text" id="client-input" placeholder="Enter client name">
     <input type="number" id="client-credits" placeholder="Enter client credits ₹">
+    <input type="passcode" id="client-passcode" placeholder="Add Passcode">
     <button id="add-client-button">Add Client</button>
     <ul id="client-list"></ul>
 
+
+    <ul id="client-status-list"> Your Passcodes</ul>
+
+
+
     <script src="/firebaseConfig.js" type="module"></script>
     <script src="/audio.js" type="module"></script>
+    <script src="/index.js" type="module"></script>
     <script src="/shipIndex.js" type="module"></script>
     <script src="/factions.js" type="module"></script>
     <script src="/shipyard.js" type="module"></script>
