@@ -102,6 +102,7 @@ function displayClients() {
 
 
 
+displayClients();
 
 // Check if the correct passcode is saved in localStorage
 if (localStorage.getItem('passcode') === 'yourPasscode') {
