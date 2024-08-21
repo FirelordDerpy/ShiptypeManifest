@@ -8,19 +8,21 @@ let clients = JSON.parse(localStorage.getItem('clients')) || [];
 
 function addClient() {
     const clientName = clientInput.value;
+    const clientPasscodeInput = document.getElementById('client-passcode'); // Add this line
+    const clientPasscode = clientPasscodeInput.value; // Add this line
     const clientCreditsInput = document.getElementById('client-credits');
     const clientCredits = clientCreditsInput.value;
-    if (clientName && clientCredits) {
+    if (clientName && clientPasscode && clientCredits) { // Check if passcode is entered
         bleep17.play();
         // Add the client name and credits to the list on the HTML page
         const listItem = document.createElement('li');
         listItem.textContent = `${clientName} - ₹${clientCredits}`;
         clientList.appendChild(listItem);
 
-        // Upload the client name and credits to Firebase
+        // Upload the client name, passcode and credits to Firebase
         const clientsRef = ref(db, 'factions/clients');
         const newClientRef = push(clientsRef);
-        set(newClientRef, { name: clientName, credits: clientCredits })
+        set(newClientRef, { name: clientName, passcode: clientPasscode, credits: clientCredits }) // Include passcode here
             .then(() => {
                 console.log('Client data uploaded successfully.');  // Log a success message
                 displayClients();  // Call displayClients after the client data has been uploaded
@@ -31,13 +33,15 @@ function addClient() {
 
         // Clear the input fields
         clientInput.value = '';
+        clientPasscodeInput.value = ''; // Add this line
         clientCreditsInput.value = '';
     }
 }
 
 
 
-function displayClients() {
+
+export function displayClients() {
     // Get the clients from Firebase
     const clientsRef = ref(db, 'factions/clients');
     onValue(clientsRef, (snapshot) => {
@@ -47,6 +51,7 @@ function displayClients() {
         const clients = snapshot.val();
         for (const key in clients) {
             const clientName = clients[key].name;
+            const clientPasscode = clients[key].passcode;
             const clientCredits = clients[key].credits;
 
             // Format the credits with commas as thousands separators
@@ -59,6 +64,10 @@ function displayClients() {
             const clientDiv = document.createElement('div');
             clientDiv.textContent = `${clientName} - ₹${formattedCredits}`;
             listItem.appendChild(clientDiv);
+
+            const passcodeDiv = document.createElement('div');
+            passcodeDiv.textContent = `Passcode: ${clientPasscode}`; // Display the passcode
+            listItem.appendChild(passcodeDiv);
 
 // Create an "Adjust Credits" button
 const adjustButton = document.createElement('button');
@@ -106,7 +115,23 @@ clientDiv.appendChild(saveButton);
 });
 listItem.appendChild(adjustButton);
 
+            // Create a "Change Passcode" button
+            const changePasscodeButton = document.createElement('button');
+            changePasscodeButton.textContent = 'Change Passcode';
+            changePasscodeButton.addEventListener('click', function() {
+                const newPasscode = prompt('Enter new passcode:');
+                if (newPasscode) {
+                    // Update the client's passcode in Firebase
+                    const clientRef = ref(db, `factions/clients/${key}`);
+                    set(clientRef, { name: clientName, passcode: newPasscode, credits: clientCredits });
 
+                    // Refresh the client list to reflect the new passcode
+                    displayClients();
+                } else {
+                    alert('Invalid input. Please enter a passcode.');
+                }
+            });
+            listItem.appendChild(changePasscodeButton);
 
 
 
