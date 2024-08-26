@@ -2,8 +2,8 @@
 export const addons = {
     'None': { cost: 0, powerLevelBoost: 0, hullPointsBoost: 0, shieldArmorPointsBoost: 0},
     'Advanced Shields': { cost: 1, powerLevelBoost: 1, hullPointsBoost: 20, shieldArmorPointsBoost: 200 },
-    'Heavy Armor': { cost: 1, powerLevelBoost: 1, hullPointsBoost: 0, shieldArmorPointsBoost: 0 },
-    'High Speed': { cost: 1.5, powerLevelBoost: 1.5, hullPointsBoost: 0, shieldArmorPointsBoost: 0 },
+    'Heavy Armor': { cost: 1, powerLevelBoost: 1, hullPointsBoost: 100, shieldArmorPointsBoost: 0 },
+    'High Speed': { cost: 1.5, powerLevelBoost: 1.5, hullPointsBoost: 200, shieldArmorPointsBoost: 0 },
 };
 
 export const primaryArm = {

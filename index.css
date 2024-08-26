@@ -7,7 +7,29 @@ html, body {
     background-color: MidnightBlue;
     outline: dashed black;
     transition: background-color 2.5s ease-in-out, opacity 2.5s ease-in-out;
+}
 
+h1{
+    color: yellow;
+}
+h2{
+    color: lightgreen;
+}
+h3{
+    color: whitesmoke;
+}
+h4{
+    color: wheat;
+}
+h5{
+    color: lightcyan;
+}
+h6{
+    color: aquamarine;
+}
+p{
+    color: white;
+    margin: 0px 0px 0px 0px;
 }
 
 .fade-in {
@@ -19,9 +41,9 @@ body {
     opacity: 0;
     color: white;
 }
+/* TRANSITION WHEN CHANGING PAGES */
 
-
-
+/* volume-slider */
 #volume-slider {
     width: 10%; /* Full-width */
     height: 5px; /* Specified height */
@@ -50,12 +72,11 @@ body {
     background: yellow; /* Green background */
     cursor: pointer; /* Cursor on hover */
 }
+/* volume-slider */
 
 
 
-#ship-stats {
-    margin-top: 20px;
-}
+
 
 #client-status-list {
     border: 1px solid black;
@@ -65,14 +86,20 @@ body {
 }
 
 
-
 /* COMMON */
+
+
+/* ADDING SHIPS PAGE AND SHIP LIST */
+
+#ship-stats {
+    margin-top: 10px;
+}
 
 .ship-stats-block {
     border: 1px solid red; /* Change the color as needed */
     padding: 10px;
     margin-bottom: 10px;
-    max-width: 500px;
+    max-width: 1000px;
 }
 
 .ship-stats-block-lite {
@@ -80,6 +107,40 @@ body {
     padding: 10px; /* Adjust as needed */
     margin-bottom: 10px; /* Adjust as needed */
 }
+
+#new-ship-class-btn{
+    border: 1px dashed salmon;
+    background-color: darkblue;
+    color: white;
+    padding: 0px 0px;
+    margin: 10px 10px;
+    font-size: larger;
+}
+#save-ship-class-btn{
+    border: 1px dashed salmon;
+    background-color: darkblue;
+    color: white;
+    padding: 0px 0px;
+    margin: 10px 10px;
+    font-size: larger;
+}
+.edit-btn {
+    border: 1px dashed salmon;
+    background-color: darkblue;
+    color: white;
+    padding: 0px 0px;
+    margin: 10px 10px;}
+
+.delete-btn{
+    border: 1px dashed salmon;
+    background-color: darkblue;
+    color: white;
+    padding: 0px 0px;
+    margin: 10px 10px;}
+
+
+/* ADDING SHIPS PAGE AND SHIP LIST */
+
 
 
 
