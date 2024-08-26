@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Ship List</title>
+    <meta charset="UTF-8" />
+    <title>Galaxies</title>
     <link rel="stylesheet" type="text/css" href="index.css">
-    <!-- Include your CSS files here -->
+
 </head>
 
 <header>
-    <h1>Factions and Clients</h1>
+    <h1>Galaxies</h1>
     <a href="galaxies.html">Galaxies</a>
     <a href="fleets.html">Fleets</a>
     <a href="shiplist.html">View Ship List</a>
@@ -16,24 +17,23 @@
     <a href="index.html">Index</a>
     <a href="factions.html">Factions</a>
     <input type="range" min="0" max="1" step="0.01" id="volume-slider">
-
 </header>
 
 
 <body>
 
-    <input type="text" id="client-input" placeholder="Enter client name">
-    <input type="number" id="client-credits" placeholder="Enter client credits ₹">
-    <input type="passcode" id="client-passcode" placeholder="Add Passcode">
-    <button id="add-client-button">Add Client</button>
-    <ul id="client-list"></ul>
-
+    <h2>Add galaxy</h2>
+    <button id="addGalaxyButton">Add Galaxy</button>
+    
+    <h2>List of Galaxies</h2>
+    <select id="galaxiesList"></select>
+    
 
     <ul id="client-status-list"> Your Passcodes</ul>
 
-
-
     <script src="/firebaseConfig.js" type="module"></script>
+    <script src="/galaxies.js" type="module"></script>
+
     <script src="/audio.js" type="module"></script>
     <script src="/index.js" type="module"></script>
     <script src="/shipIndex.js" type="module"></script>

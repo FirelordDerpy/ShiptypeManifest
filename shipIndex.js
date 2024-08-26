@@ -196,9 +196,21 @@ function displayShipStats() {
             document.getElementById('ship-name').value = ship.name;
             document.getElementById('ship-manufacturer').value = ship.manufacturer;
             document.getElementById('ship-description').value = ship.description;
+            document.getElementById('primary-armament').value = ship.primaryArmament;
+            document.getElementById('secondary-armament-1').value = ship.secondaryArmament1;
+            document.getElementById('secondary-armament-2').value = ship.secondaryArmament2;
+            const dropdown1 = document.getElementById('ship-addons-1');
+            const dropdown2 = document.getElementById('ship-addons-2');
+            const dropdown3 = document.getElementById('ship-addons-3');
+            dropdown1.selectedIndex = Array.from(dropdown1.options).findIndex(option => option.value === ship.addons[0].name);
+            dropdown2.selectedIndex = Array.from(dropdown2.options).findIndex(option => option.value === ship.addons[1].name);
+            dropdown3.selectedIndex = Array.from(dropdown3.options).findIndex(option => option.value === ship.addons[2].name);
+
             document.getElementById('new-ship-class-form').style.display = 'block';
             document.getElementById('save-ship-class-btn').textContent = 'Update';
             document.getElementById('save-ship-class-btn').dataset.id = ship.id;
+            window.scrollTo(0, 0);
+
         });
     }
 }
@@ -270,18 +282,17 @@ document.getElementById('save-ship-class-btn').addEventListener('click', functio
         return;
     }
 
+    const newShip = new Ship(type, name, selectedOptions, primaryArmament, secondaryArmament1, secondaryArmament2, description, manufacturer);
+
     if (this.textContent === 'Update') {
         const id = this.dataset.id;
 
         // Update the ship in Firebase
         const shipRef = ref(db, 'ships/' + id);
-        set(shipRef, { type, name, addons: selectedOptions, primaryArmament, secondaryArmament1, secondaryArmament2, description, manufacturer });
+        set(shipRef, newShip);
 
         this.textContent = 'Save';
     } else {
-
-        const primaryArmament = document.getElementById('primary-armament').value;
-        const newShip = new Ship(type, name, selectedOptions, primaryArmament, secondaryArmament1, secondaryArmament2, description, manufacturer,);
         bleep17.play();
         newShip.id = saveShipToFirebase(newShip);
     }
