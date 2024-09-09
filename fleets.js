@@ -7,7 +7,9 @@ import { ships } from '/shipIndex.js';
 // }
 
 
-    if (window.location.pathname.toLowerCase().includes('fleets')) {
+
+
+if (window.location.pathname.toLowerCase().includes('fleets')) {
 
 
 
@@ -77,7 +79,7 @@ detailsButton.addEventListener('click', async function() {
             <p>Type: ${shipDetails.type}. Manufacturer: ${shipDetails.manufacturer}. Base Cost: ₹ ${shipDetails.baseCost}</p>
             <p>Silhouette: ${shipDetails.silhouette}. Power Level: ${shipDetails.powerLevel}</p>
             <p>Hull Points: ${shipDetails.hullPoints}. Shield and Armor Points: ${shipDetails.shieldArmorPoints}</p>
-            <p>Primary Armament: ${shipDetails.primaryArmament}</p>
+            <p>Primary Armament: ${shipDetails.primaryArmament}</p>a
             <p>Secondary Armament 1: ${shipDetails.secondaryArmament1}</p>
             <p>Secondary Armament 2: ${shipDetails.secondaryArmament2}</p>
             <p>Addons: ${shipDetails.addons.map(addon => addon.name).join(', ')}</p>
