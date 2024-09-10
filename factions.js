@@ -1,4 +1,4 @@
-import { app, db, push, onValue, remove, set, ref } from '/firebaseConfig.js';
+import { app, db, push, onValue, remove, set, update, ref } from '/firebaseConfig.js';
 import { manufacturers } from '/manufacturers.js';
 
 let clientInput, addClientButton, clientList;
@@ -105,7 +105,7 @@ export function displayClients() {
 
                 // Update the client's manufacturers in Firebase
                 const clientRef = ref(db, `factions/clients/${key}`);
-                await set(clientRef, { name: clientName, passcode: clientPasscode, credits: clientCredits, manufacturers: selectedManufacturers });
+                await update(clientRef, { manufacturers: selectedManufacturers });
             });
 
             // Create an "Edit" button
@@ -120,7 +120,7 @@ export function displayClients() {
                     const selectedOptions = Array.from(manufacturersDiv.querySelectorAll('input:checked'));
                     const selectedManufacturers = selectedOptions.map(option => option.value);
                     const clientRef = ref(db, `factions/clients/${key}`);
-                    set(clientRef, { name: clientName, passcode: clientPasscode, credits: clientCredits, manufacturers: selectedManufacturers });
+                    update(clientRef, { manufacturers: selectedManufacturers });
 
                     // Toggle visibility of buttons and enable/disable checkboxes
                     adjustButton.style.display = 'none';
@@ -178,7 +178,7 @@ export function displayClients() {
                     if (newCredits && Number.isInteger(+newCredits) && +newCredits >= 0) {
                         // Update the client's credits in Firebase
                         const clientRef = ref(db, `factions/clients/${key}`);
-                        await set(clientRef, { name: clientName, passcode: clientPasscode, credits: newCredits, manufacturers: clientManufacturers });
+                        await update(clientRef, { credits: newCredits });
 
                         // Format the new credits with commas as thousands separators
                         const formattedCredits = (+newCredits).toLocaleString();
@@ -205,7 +205,7 @@ export function displayClients() {
                 if (newPasscode) {
                     // Update the client's passcode in Firebase
                     const clientRef = ref(db, `factions/clients/${key}`);
-                    set(clientRef, { name: clientName, passcode: newPasscode, credits: clientCredits, manufacturers: clientManufacturers });
+                    update(clientRef, { passcode: newPasscode });
 
                     // Refresh the client list to reflect the new passcode
                     displayClients();
@@ -235,6 +235,7 @@ export function displayClients() {
         }
     });
 }
+
 
 
 if (window.location.pathname.toLowerCase().includes('faction')) {
