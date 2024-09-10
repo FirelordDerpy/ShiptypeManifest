@@ -329,8 +329,54 @@ a:active {
     border: 1px solid #ccc;
     border-radius: 5px;
     border: dashed red;
-    background-color: rebeccapurple;
+    background-color: rgb(50, 21, 78);
 }
+
+
+.shipyards-text {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.manufacturers-div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.manufacturers-div label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.selected-manufacturers-div {
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.edit-button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.edit-button:hover {
+    background-color: #45a049;
+}
+
+
+/* FACTIONS PAGE */
+
 
 /* FLEETS PAGE */
 

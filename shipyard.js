@@ -1,6 +1,5 @@
 import { app, db, push, getDatabase, set, ref, onValue, get} from '/firebaseConfig.js';
 import { ships } from '/shipIndex.js';
-//import { } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 let audioPlayed = false;
 // TO REPLACE 
 let buildTimeModifier = 1.5;
@@ -44,27 +43,22 @@ function createShipDropdown() {
     buildButton.id = 'build-button';
     buildButton.textContent = 'Build ship';
 
-    // Append the "Build ship" button to the specific div
     const buildButtonContainer = document.getElementById('build-button-container');
     buildButtonContainer.appendChild(buildButton);
 
-    // Fetch ships from Firebase
     const shipsRef = ref(db, 'ships');
     onValue(shipsRef, (snapshot) => {
         const data = snapshot.val();
-        // Convert the data object to an array and sort it by ship type
         const sortedData = Object.values(data).sort((a, b) => a.type.localeCompare(b.type));
         for (const shipData of sortedData) {
             const option = document.createElement('option');
             option.value = shipData.name;
-            // Include both the ship type and the name in the option text
-            option.text = `${shipData.type} - ${shipData.name} ₹${shipData.finalCost}`;
+            option.text = `${shipData.type} - ${shipData.name} (${shipData.manufacturer}) ₹${shipData.finalCost}`;
             shipDropdown.appendChild(option);
         }
     });
 
-    // Add event listeners to update the displayed stats when a ship is selected or the quantity changes, and to display the build information when the button is clicked
-        if (!isEventListenerAdded) {  // Check if the event listener has already been added
+        if (!isEventListenerAdded) {  
         shipDropdown.addEventListener('change', function() {
             displaySelectedShipStats(this.value, quantityInput.value);
         });
@@ -75,7 +69,7 @@ function createShipDropdown() {
             
             buildQue(shipDropdown.value, quantityInput.value);
         });
-        isEventListenerAdded = true;  // Set the flag to true after adding the event listener
+        isEventListenerAdded = true;  
         
     }
 }
@@ -86,12 +80,10 @@ function createShipDropdown() {
 async function createClientDropdown() {
     const clientDropdown = document.getElementById('client-dropdown');
     
-    // If the dropdown already exists, remove it
     if (clientDropdown) {
         clientDropdown.remove();
     }
 
-    // Create a new dropdown
     const newClientDropdown = document.createElement('select');
     newClientDropdown.id = 'client-dropdown';
     
@@ -106,7 +98,7 @@ async function createClientDropdown() {
     const clientDropdownContainer = document.getElementById('client-dropdown-container');
     clientDropdownContainer.appendChild(newClientDropdown);
 
-    // Fetch clients from Firebase
+    // clients from Firebase
     const clientsRef = ref(db, 'factions/clients');
     const snapshot = await get(clientsRef);
     const clients = snapshot.val();
@@ -115,6 +107,15 @@ async function createClientDropdown() {
         const option = document.createElement('option');
         option.value = key;
         option.text = clientName;
+
+        // Check if the passcode is unlocked in local storage
+        if (!localStorage.getItem(clientName)) {
+            option.disabled = true;
+            option.text += ' (Locked)';
+        } else {
+            option.text += ' ✔️';
+        }
+
         newClientDropdown.appendChild(option);
     }
 
@@ -123,8 +124,6 @@ async function createClientDropdown() {
         displayClientCredits(this.value);
     });
 }
-
-
 
 function displayClientCredits(clientKey) {
     // Fetch the client's credits  Firebase
@@ -136,10 +135,17 @@ function displayClientCredits(clientKey) {
         // Display credits
         const clientCreditsDiv = document.getElementById('client-credits');
         clientCreditsDiv.textContent = `Client's credits: ₹ ${clientCredits.toLocaleString()}`;
+
+        // Check if the passcode is unlocked in local storage
+        if (localStorage.getItem(client.name)) {
+            clientCreditsDiv.innerHTML += ` <span style="color: green;">✔️</span>`;
+        }
     });
 }
 
+
 //CLIENT CLIENT
+
 
 
 
@@ -155,11 +161,10 @@ function displaySelectedShipStats(shipName, quantity) {
             oldStats.remove();
         }
 
-        // Calculate the build time based on the power level and the build time modifier
+        // Calculate the build time 
         let buildTime = selectedShip.calculateTotalPowerLevel() * buildTimeModifier * 1000;
         buildTime = buildTime.toFixed(1);
 
-        // Create the new stats
         const shipStats = document.createElement('div');
         shipStats.id = 'ship-details';
         shipStats.innerHTML = `
@@ -193,7 +198,7 @@ async function buildQue(shipName, quantity) {
     selectedClientKey = clientDropdown.value;
     const selectedShip = ships.find(ship => ship.name === shipName);
     if (selectedShip) {
-        // Calculate the build time and cost
+        // Calculate build time and cost
 
         const buildTime = selectedShip.calculateTotalPowerLevel() * buildTimeModifier;
         const totalCost = selectedShip.calculateTotalCost() * quantity;
@@ -203,7 +208,7 @@ async function buildQue(shipName, quantity) {
         const client = snapshot.val();
         let clientCredits = client.credits;
 
-        // Check if the client has  credits
+        // Check if the client has credits
         if (clientCredits >= totalCost) {
             clientCredits -= totalCost;
             set(clientRef, { ...client, credits: clientCredits });
@@ -236,7 +241,7 @@ async function buildQue(shipName, quantity) {
                 buildQueueContainer.appendChild(buildInfoDiv);
             }
 
-            // Create a countdown timer
+            // countdown timer
                 timer = setInterval(function() {
                     const now = new Date();
                     const timeLeft = (endTime - now) / 1000;
@@ -250,6 +255,7 @@ async function buildQue(shipName, quantity) {
         }
     }
 }
+
 
 
 let loadBuildQueueInterval;
@@ -268,11 +274,11 @@ function loadBuildQueue() {
             buildQueueContainer.innerHTML = '';
 
             for (const [key, buildInfo] of Object.entries(buildQueue)) {
-                // Create a div for the build information
+                //div for the build information
                 const buildInfoDiv = document.createElement('div');
                 buildInfoDiv.className = 'build-info';
 
-                // Create a div for the build status text
+                // div for the build status text
                 const statusDiv = document.createElement('div');
                 statusDiv.className = 'status-box';
                 buildInfoDiv.appendChild(statusDiv);
@@ -300,7 +306,7 @@ function loadBuildQueue() {
                     <p>Completion Time: ${buildInfo.endTime}</p>
                     `; 
 
-// Create a "Deliver" button
+// Create Deliver button
 const deliverButton = document.createElement('button');
 deliverButton.textContent = 'Deliver';
 deliverButton.className = 'shipBtn';
@@ -339,7 +345,6 @@ deliverButton.addEventListener('click', async function() {
             }
 
 
-            // If the ship does not exist, save the build information under the client's name
             if (!shipExists) {
                 const newClientBuildInfoRef = push(clientShipsRef);
                 set(newClientBuildInfoRef, {
@@ -349,7 +354,6 @@ deliverButton.addEventListener('click', async function() {
                 });
             }
 
-            // Remove the build information div
             buildInfoDiv.remove();
         } else {
             console.log("The client listed in the statusDiv does not match the client you are delivering to.");
@@ -372,7 +376,7 @@ buildInfoDiv.appendChild(deliverButton);
                         progressBar.value = now.getTime() - new Date(buildInfo.startTime).getTime();
                         buildInfoDiv.appendChild(progressBar);
                         
-                        // Create a cancel button
+                        // cancel button
                             const cancelButton = document.createElement('button');
                             cancelButton.textContent = 'Cancel';
                             cancelButton.className = 'shipBtn';
@@ -415,9 +419,6 @@ window.onload = function() {
         createClientDropdown();
     }
 };
-
-
-// Function to update the time 
 
 function updateTime() {
     const now = new Date();

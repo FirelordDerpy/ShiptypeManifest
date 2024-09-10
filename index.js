@@ -1,4 +1,4 @@
-import { app, db, push, getDatabase, set, ref, onValue, get} from '/firebaseConfig.js';
+import { app, db, push, getDatabase, set, ref, onValue, get } from '/firebaseConfig.js';
 
 // import { displayClients } from '/factions.js';
 
@@ -98,11 +98,6 @@ function displayClients() {
     });
 }
 
-
-
-
-
-
 // Check if the correct passcode is saved in localStorage
 if (localStorage.getItem('passcode') === 'yourPasscode') {
     // Change the background color of the list item to green
@@ -113,57 +108,50 @@ if (window.location.pathname.toLowerCase().includes('index')) {
     displayClients();
 }
 
-
-
-
-
-
-if (window.location.pathname.toLowerCase() === '/index' || window.location.pathname === '/'){
+if (window.location.pathname.toLowerCase() === '/index' || window.location.pathname === '/') {
     displayClients();
-
+}
 
 const resetButton = document.getElementById('reset-button');
 
+// Add a check to ensure the resetButton element exists
+if (resetButton) {
+    // Add an event listener to the reset button
+    resetButton.addEventListener('click', function() {
+        // Get all the list items
+        const listItems = document.getElementsByClassName('client-list-item');
 
+        // Loop through each list item and reset its state
+        for (let i = 0; i < listItems.length; i++) {
+            const listItem = listItems[i];
 
+            // Reset the background color
+            listItem.style.backgroundColor = 'blue';
 
-// Add an event listener to the reset button
-resetButton.addEventListener('click', function() {
-    // Get all the list items
-    const listItems = document.getElementsByClassName('client-list-item');
+            // Remove the "Passcode correct" text
+            const passcodeCorrectText = listItem.querySelector('p');
+            if (passcodeCorrectText) {
+                listItem.removeChild(passcodeCorrectText);
+            }
 
-    // Loop through each list item and reset its state
-    for (let i = 0; i < listItems.length; i++) {
-        const listItem = listItems[i];
+            // Show the submit button and the input field
+            const submitButton = listItem.querySelector('.submit-button');
+            const passcodeInput = listItem.querySelector('.passcode-input');
+            submitButton.style.display = 'block';
+            passcodeInput.style.display = 'block';
 
-        // Reset the background color
-        listItem.style.backgroundColor = 'blue';
+            // Clear the input field
+            passcodeInput.value = '';
 
-        // Remove the "Passcode correct" text
-        const passcodeCorrectText = listItem.querySelector('p');
-        if (passcodeCorrectText) {
-            listItem.removeChild(passcodeCorrectText);
+            // Remove the passcode from localStorage
+            const clientName = listItem.querySelector('.client-div h2').textContent;
+            localStorage.removeItem(clientName);
         }
 
-        // Show the submit button and the input field
-        const submitButton = listItem.querySelector('.submit-button');
-        const passcodeInput = listItem.querySelector('.passcode-input');
-        submitButton.style.display = 'block';
-        passcodeInput.style.display = 'block';
-
-        // Clear the input field
-        passcodeInput.value = '';
-
-        // Remove the passcode from localStorage
-        const clientName = listItem.querySelector('.client-div h2').textContent;
-        localStorage.removeItem(clientName);
-    }
-
-    // Log the clients and their passcode statuses
-    console.log('All clients have been reset to default.');
-});
+        // Log the clients and their passcode statuses
+        console.log('All clients have been reset to default.');
+    });
 }
-
 
 function checkPasscodeStatus() {
     // Get the clients data from Firebase
