@@ -99,44 +99,120 @@ if (window.location.pathname.toLowerCase().includes('fleets')) {
                             `;
                             // Append the details div to the list item
                             shipListItem.appendChild(detailsDiv);
+
+
+
                         }
                     });
                     shipListItem.appendChild(detailsButton);
 
-                    // Create a "Delete" button for each ship
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Delete';
-                    deleteButton.className = 'DelBtnFP';  // Assign your CSS class
-                    deleteButton.addEventListener('click', function() {
-                        // Delete the ship from Firebase
-                        const shipRef = ref(db, `factions/clients/${clientKey}/builds/ownedships/${ship.shipId}`);
-                        set(shipRef, null);
+// Create a "Delete" button for each ship
+const deleteButton = document.createElement('button');
+deleteButton.textContent = 'Delete';
+deleteButton.className = 'DelBtnFP';  // Assign your CSS class
+deleteButton.addEventListener('click', async function() {
+    // Delete the ship from Firebase
+    const shipRef = ref(db, `factions/clients/${clientKey}/builds/ownedships/${ship.shipId}`);
+    await set(shipRef, null);
 
-                        // Remove the list item from the list
-                        shipListItem.remove();
-                    });
-                    shipListItem.appendChild(deleteButton);
+    // Remove the list item from the list
+    shipListItem.remove();
+});
+shipListItem.appendChild(deleteButton);
 
-                    // Create a "Change Quantity" button for each ship
-                    const changeQuantityButton = document.createElement('button');
-                    changeQuantityButton.textContent = 'Change Quantity';
-                    changeQuantityButton.className = 'ChgQtyBtnFP';  // Assign your CSS class
-                    changeQuantityButton.addEventListener('click', function() {
-                        // Prompt the user to enter a new quantity
-                        const newQuantity = prompt('Enter a new quantity:');
-                        if (newQuantity !== null) {
-                            // Update the quantity in Firebase
-                            const shipRef = ref(db, `factions/clients/${clientKey}/builds/ownedships/${ship.shipId}`);
-                            set(shipRef, { ...ship, quantity: newQuantity });
+// Create a "Transfer" button for each ship
+const transferButton = document.createElement('button');
+transferButton.textContent = 'Transfer';
+transferButton.className = 'TrfBtnFP';
+transferButton.addEventListener('click', function() {
+    // Create a dropdown for selecting the client
+    const clientDropdown = document.createElement('select');
+    for (const otherClientKey in clients) {
+        if (otherClientKey !== clientKey) {
+            const option = document.createElement('option');
+            option.value = otherClientKey;
+            option.textContent = clients[otherClientKey].name;
+            clientDropdown.appendChild(option);
+        }
+    }
 
-                            // Update the quantity in the list item
-                            shipListItem.innerHTML = `${ship.shipId} ${newQuantity}x - ${ship.shipName} (${ship.type})`;
-                            shipListItem.appendChild(detailsButton);
-                            shipListItem.appendChild(deleteButton);
-                            shipListItem.appendChild(changeQuantityButton);
-                        }
-                    });
-                    shipListItem.appendChild(changeQuantityButton);
+    // Create an input for entering the quantity
+    const quantityInput = document.createElement('input');
+    quantityInput.type = 'number';
+    quantityInput.placeholder = 'Enter quantity';
+
+    // Create a button to confirm the transfer
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = 'Confirm';
+    confirmButton.addEventListener('click', async function() {
+        const selectedClientKey = clientDropdown.value;
+        const transferQuantity = parseInt(quantityInput.value);
+
+        if (transferQuantity > 0 && transferQuantity <= ship.quantity) {
+            // Subtract the quantity from the current client
+            const updatedQuantity = ship.quantity - transferQuantity;
+            const currentClientShipRef = ref(db, `factions/clients/${clientKey}/builds/ownedships/${ship.shipId}`);
+            await set(currentClientShipRef, { ...ship, quantity: updatedQuantity });
+
+            // Add the quantity to the selected client
+            const selectedClientShipRef = ref(db, `factions/clients/${selectedClientKey}/builds/ownedships/${ship.shipId}`);
+            const selectedClientShipSnapshot = await get(selectedClientShipRef);
+            const selectedClientShip = selectedClientShipSnapshot.val();
+            const newQuantity = selectedClientShip ? selectedClientShip.quantity + transferQuantity : transferQuantity;
+            await set(selectedClientShipRef, { ...ship, quantity: newQuantity });
+
+            // Update the quantity in the list item
+            shipListItem.innerHTML = `${ship.shipId} ${updatedQuantity}x - ${ship.shipName} (${ship.type})`;
+            shipListItem.appendChild(detailsButton);
+            shipListItem.appendChild(deleteButton);
+            shipListItem.appendChild(changeQuantityButton);
+            shipListItem.appendChild(transferButton);
+
+            // Remove the ship from the current client if the quantity is zero
+            if (updatedQuantity === 0) {
+                await set(currentClientShipRef, null);
+                shipListItem.remove();
+            }
+        } else {
+            alert('Invalid quantity');
+        }
+    });
+
+    // Append the dropdown, input, and confirm button to the details div if they don't already exist
+    if (!detailsDiv.querySelector('select')) {
+        detailsDiv.appendChild(clientDropdown);
+    }
+    if (!detailsDiv.querySelector('input[type="number"]')) {
+        detailsDiv.appendChild(quantityInput);
+    }
+    if (!detailsDiv.querySelector('button.confirm-button')) {
+        confirmButton.className = 'confirm-button'; // Add a class to identify the button
+        detailsDiv.appendChild(confirmButton);
+    }
+});
+
+const changeQuantityButton = document.createElement('button');
+changeQuantityButton.textContent = 'Change Quantity';
+changeQuantityButton.className = 'ChgQtyBtnFP';  // Assign your CSS class
+changeQuantityButton.addEventListener('click', async function() {
+    // Prompt the user to enter a new quantity
+    const newQuantity = prompt('Enter a new quantity:');
+    if (newQuantity !== null) {
+        // Update the quantity in Firebase
+        const shipRef = ref(db, `factions/clients/${clientKey}/builds/ownedships/${ship.shipId}`);
+        await set(shipRef, { ...ship, quantity: newQuantity });
+
+        // Update the quantity in the list item
+        shipListItem.innerHTML = `${ship.shipId} ${newQuantity}x - ${ship.shipName} (${ship.type})`;
+        shipListItem.appendChild(detailsButton);
+        shipListItem.appendChild(deleteButton);
+        shipListItem.appendChild(changeQuantityButton);
+        shipListItem.appendChild(transferButton);
+    }
+});
+shipListItem.appendChild(changeQuantityButton);
+
+
                 });
             } else {
                 clientDiv.textContent = `Client Name: ${client.name}`;
